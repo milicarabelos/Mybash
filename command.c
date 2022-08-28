@@ -49,8 +49,12 @@ void scommand_set_redir_in(scommand self, char * filename) {
     self->args_in=filename;
 }
 
-void scommand_set_redir_out(scommand self, char * filename);
-//Nacho
+void scommand_set_redir_out(scommand self, char * filename) {
+    //Nacho
+    assert(self!=NULL);
+    self->args_out=filename;
+}
+
 bool scommand_is_empty(const scommand self);
 //Juan
 unsigned int scommand_length(const scommand self);
