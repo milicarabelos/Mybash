@@ -71,7 +71,21 @@ struct pipeline_s
 
 pipeline pipeline_new(void);
 
-pipeline pipeline_destroy(pipeline self);
+pipeline pipeline_destroy(pipeline self)
+{
+    g_assert(self != NULL);
+    if (self != NULL && self->commands_queue != NULL)
+    {
+        g_list_free(self->commands_queue); /* liberar la memoria de la lista */
+        self->commands_queue = NULL;
+    }
+    free(self);
+    self = NULL;    
+
+    g_assert(self == NULL);
+    return self;
+}    
+
 
 void pipeline_push_back(pipeline self, scommand sc);
 
