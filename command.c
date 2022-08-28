@@ -79,7 +79,7 @@ char * scommand_to_string(const scommand self);
 //pipeline: Mili y Tomi
 struct pipeline_s
 {
-    GSList *commands_queue;
+    GList *commands_queue;
     bool wait;
 };
 
