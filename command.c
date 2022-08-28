@@ -74,8 +74,12 @@ bool scommand_is_empty(const scommand self){
     g_assert(self != NULL);
     return self->command != NULL;
 }
-unsigned int scommand_length(const scommand self);
-//Juan
+unsigned int scommand_length(const scommand self){
+    //JUan
+    g_assert(self!=NULL);
+    return g_list_length(self->command); 
+}
+
 char * scommand_front(const scommand self) {
     //Nacho
     assert(self!=NULL && !scommand_is_empty(self));
