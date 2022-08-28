@@ -2,6 +2,7 @@
 #include <glib-2.0/glib.h> //revisar esto
 #include "command.h"
 #include <assert.h>
+#include "strextra.h"  /* Interfaz                           */
 
 //pruebacommit
 //scommand: Juan y Nacho
