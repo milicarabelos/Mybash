@@ -59,8 +59,14 @@ bool scommand_is_empty(const scommand self);
 //Juan
 unsigned int scommand_length(const scommand self);
 //Juan
-char * scommand_front(const scommand self);
-//Nacho
+char * scommand_front(const scommand self) {
+    //Nacho
+    assert(self!=NULL && !scommand_is_empty(self));
+    char * ret;
+    ret = g_list_nth_data(self->command,0);
+    return ret;
+}
+
 char * scommand_get_redir_in(const scommand self);
 //Juan
 char * scommand_get_redir_out(const scommand self);
