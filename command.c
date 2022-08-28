@@ -110,7 +110,11 @@ void pipeline_pop_front(pipeline self)
     self->commands_queue = g_list_delete_link(self->commands_queue,self->commands_queue);
 }
 
-void pipeline_set_wait(pipeline self, const bool w);
+void pipeline_set_wait(pipeline self, const bool w)
+{
+    g_assert(self != NULL);
+    self->wait = w;
+}
 
 bool pipeline_is_empty(const pipeline self);
 
