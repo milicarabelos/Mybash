@@ -116,7 +116,11 @@ void pipeline_set_wait(pipeline self, const bool w)
     self->wait = w;
 }
 
-bool pipeline_is_empty(const pipeline self);
+bool pipeline_is_empty(const pipeline self)
+{
+    g_assert(self != NULL);
+    return self->commands_queue != NULL;
+}
 
 unsigned int pipeline_length(const pipeline self);
 
