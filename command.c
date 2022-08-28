@@ -36,9 +36,13 @@ void tail(GList * list) {
 //Podria ir dentro de scommand_pop_front sin necesidad de definirla como otra funcion pero la modularizamos por si se necesita de su uso
 }
 
-void scommand_pop_front(scommand self); //observacion 1: requiere de una implementacion de la funcion tail() de listas que no esta en la libreria, por eso se agrega en el .h tmb.
+void scommand_pop_front(scommand self) { //observacion 1: requiere de una implementacion de la funcion tail() de listas que no esta en la libreria, por eso se agrega en el .h tmb.
+    //Nacho
+    assert(self!=NULL && !scommand_is_empty(self));
+    tail(self->command);
 //observacion2: verificar si se puede implementar sin necesidad de tail. Es decir si existe una funcion que elimine elementos
-//Nacho
+
+}
 void scommand_set_redir_in(scommand self, char * filename);
 //Nacho
 void scommand_set_redir_out(scommand self, char * filename);
