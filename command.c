@@ -2,7 +2,7 @@
 #include <glib-2.0/glib.h> //revisar esto
 #include "command.h"
 #include <assert.h>
-#include <string.h>
+
 //pruebacommit
 //scommand: Juan y Nacho
 struct scommand_s
