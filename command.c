@@ -51,11 +51,10 @@ void scommand_push_back(scommand self, char * argument) {
 	}
 
 
-void scommand_pop_front(scommand self) { //observacion 1: requiere de una implementacion de la funcion tail() de listas que no esta en la libreria, por eso se agrega en el .h tmb.
+void scommand_pop_front(scommand self) {
     //Nacho
     assert(self!=NULL && !scommand_is_empty(self));
     self->command= g_list_delete_link(self->command,self->command);
-//observacion2: verificar si se puede implementar sin necesidad de tail. Es decir si existe una funcion que elimine elementos
 
 }
 void scommand_set_redir_in(scommand self, char * filename) {
@@ -70,8 +69,11 @@ void scommand_set_redir_out(scommand self, char * filename) {
     self->args_out=filename;
 }
 
-bool scommand_is_empty(const scommand self);
-//Juan
+bool scommand_is_empty(const scommand self){
+    //Juan
+    g_assert(self != NULL);
+    return self->command != NULL;
+}
 unsigned int scommand_length(const scommand self);
 //Juan
 char * scommand_front(const scommand self) {
