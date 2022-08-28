@@ -93,14 +93,46 @@ char * scommand_get_redir_in(const scommand self){
     g_assert(self != NULL);
     return self->args_in;
 }
+
 char * scommand_get_redir_out(const scommand self){
     //Juan
     g_assert(self != NULL);
     return self->args_out;
 }
-char * scommand_to_string(const scommand self);
-//Juan y Nacho
 
+char * scommand_to_string(const scommand self){
+    assert(self != NULL);
+    GList * list = self->command;
+    char * args_in = scommand_get_redir_in(self);
+    char * args_out = scommand_get_redir_out(self);
+
+    char * str = NULL;
+    if  (list!=NULL) {
+        str = scommand_front(self);
+        for (unsigned int i = 1; i < scommand_length(self); i++)
+        {
+            str = strmerge(str, g_list_nth_data(list, i));
+            str = strmerge(str, " ");
+        };
+        
+        if (args_in != NULL){
+            str = strmerge(str, " < ");
+            str = strmerge(str, args_in);
+        };
+        if (args_out!= NULL) {
+            str = strmerge(str, " > ");
+            str = strmerge(str, args_out);
+        };
+    }
+
+    assert(
+        scommand_is_empty(self) ||
+        scommand_get_redir_in(self)==NULL ||
+        scommand_get_redir_out(self)==NULL ||
+        strlen(str)>0
+    );
+    return str;
+}
 
 
 //pipeline: Mili y Tomi
