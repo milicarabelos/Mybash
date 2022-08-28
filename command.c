@@ -43,8 +43,12 @@ void scommand_pop_front(scommand self) { //observacion 1: requiere de una implem
 //observacion2: verificar si se puede implementar sin necesidad de tail. Es decir si existe una funcion que elimine elementos
 
 }
-void scommand_set_redir_in(scommand self, char * filename);
-//Nacho
+void scommand_set_redir_in(scommand self, char * filename) {
+    //Nacho
+    assert(self!=NULL);
+    self->args_in=filename;
+}
+
 void scommand_set_redir_out(scommand self, char * filename);
 //Nacho
 bool scommand_is_empty(const scommand self);
