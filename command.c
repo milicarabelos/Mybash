@@ -133,7 +133,11 @@ scommand pipeline_front(const pipeline self)
     return g_list_nth_data(self->commands_queue,0);
 }
 
-bool pipeline_get_wait(const pipeline self);
+bool pipeline_get_wait(const pipeline self)
+{
+    g_assert(self != NULL);
+    return self->wait;
+}
 
 char * pipeline_to_string(const pipeline self);
 
