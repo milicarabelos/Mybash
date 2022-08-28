@@ -93,8 +93,11 @@ char * scommand_get_redir_in(const scommand self){
     g_assert(self != NULL);
     return self->args_in;
 }
-char * scommand_get_redir_out(const scommand self);
-//Juan
+char * scommand_get_redir_out(const scommand self){
+    //Juan
+    g_assert(self != NULL);
+    return self->args_out;
+}
 char * scommand_to_string(const scommand self);
 //Juan y Nacho
 
