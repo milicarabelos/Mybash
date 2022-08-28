@@ -15,8 +15,17 @@ struct scommand_s
     char * args_out;
 };
 
-scommand scommand_new(void);
-//Juan
+scommand scommand_new(void){
+    //Juan
+    scommand init;
+    init = calloc(1, sizeof(struct scommand_s));
+    init->args_in = NULL;
+    init->args_out = NULL;
+    init->command = NULL;
+    g_assert(init != NULL && scommand_is_empty(init));
+    return init;
+}
+
 scommand scommand_destroy(scommand self);
 //Juan
 void scommand_push_back(scommand self, char * argument) {
