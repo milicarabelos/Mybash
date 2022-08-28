@@ -100,7 +100,7 @@ pipeline pipeline_destroy(pipeline self)
 void pipeline_push_back(pipeline self, scommand sc)
 {
     g_assert(self != NULL && sc != NULL);
-    self = g_list_append(self->commands_queue, sc);
+    self->commands_queue = g_list_append(self->commands_queue, sc);
     g_assert(!pipeline_is_empty(self));
 }
 
@@ -122,7 +122,10 @@ bool pipeline_is_empty(const pipeline self)
     return self->commands_queue != NULL;
 }
 
-unsigned int pipeline_length(const pipeline self);
+unsigned int pipeline_length(const pipeline self)
+{   g_assert(self!=NULL);
+    return g_list_length(self->commands_queue); 
+}
 
 scommand pipeline_front(const pipeline self);
 
