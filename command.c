@@ -21,25 +21,11 @@ void scommand_push_back(scommand self, char * argument) {
     self->command=g_list_append(self->command, argument);
 	}
 
-void tail(GList * list) {
-//Nacho
-    assert(list!=NULL);
-    //glist no tiene definido el tipo tail, y como no podemos acceder a la representacion interna
-    //hacemos un "tail"
-    GList * aux; 
-    aux=list;//por ahora sino no me deja no incializarlo, y si lo incializo en NULL hay problemas
-    for(unsigned int i=1;i<g_list_length(list);i++) {
-        aux=g_list_append(aux,(g_list_nth_data(list,i)));
-    }
-    list=g_list_copy(aux);
-    g_list_free(aux);
-//Podria ir dentro de scommand_pop_front sin necesidad de definirla como otra funcion pero la modularizamos por si se necesita de su uso
-}
 
 void scommand_pop_front(scommand self) { //observacion 1: requiere de una implementacion de la funcion tail() de listas que no esta en la libreria, por eso se agrega en el .h tmb.
     //Nacho
     assert(self!=NULL && !scommand_is_empty(self));
-    tail(self->command);
+    self->command= g_list_delete_link(self->command,self->command);
 //observacion2: verificar si se puede implementar sin necesidad de tail. Es decir si existe una funcion que elimine elementos
 
 }
