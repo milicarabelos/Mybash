@@ -97,8 +97,12 @@ pipeline pipeline_destroy(pipeline self)
     return self;
 }    
 
-
-void pipeline_push_back(pipeline self, scommand sc);
+void pipeline_push_back(pipeline self, scommand sc)
+{
+    g_assert(self != NULL && sc != NULL);
+    self = g_list_append(self->commands_queue, sc);
+    g_assert(!pipeline_is_empty(self));
+}
 
 void pipeline_pop_front(pipeline self);
 
