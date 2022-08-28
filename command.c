@@ -69,7 +69,16 @@ struct pipeline_s
     bool wait;
 };
 
-pipeline pipeline_new(void);
+pipeline pipeline_new(void)
+{
+    pipeline init;
+    init = calloc(1, sizeof(struct pipeline_s));
+    init->wait = true;
+    init->commands_queue = NULL;
+    g_assert(init != NULL && pipeline_is_empty(init) && pipeline_get_wait(init));
+    
+    return init;
+}
 
 pipeline pipeline_destroy(pipeline self)
 {
