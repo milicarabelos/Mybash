@@ -13,8 +13,13 @@ scommand scommand_new(void);
 //Juan
 scommand scommand_destroy(scommand self);
 //Juan
-void scommand_push_back(scommand self, char * argument);
+void scommand_push_back(scommand self, char * argument) {
 //Nacho
+    assert(self!= NULL && argument !=NULL);
+    //append: Adds a new element on to the end of the list.
+    //agrego al final de la lista de commands el argument (nuevo command)
+    self->command=g_list_append(self->command, argument);
+	}
 
 void tail(GList * list) {
 //Nacho
