@@ -210,5 +210,26 @@ bool pipeline_get_wait(const pipeline self)
     return self->wait;
 }
 
-char * pipeline_to_string(const pipeline self);
+char * pipeline_to_string(const pipeline self){
+    //Tomi y Mili 
+    g_assert(self != NULL);
+    char * str = NULL;
+    GList* list = self->commands_queue;
+    
+
+    while (list != NULL)
+    {
+        char * scommand_to_str = scommand_to_string(list->data);
+        str = strmerge(str,scommand_to_str);
+        str = strmerge(str, " | ");
+        list = list->next;
+    }
+
+    if (!self->wait)
+    {
+        str = strmerge(str, " &");
+    }
+
+    return str;
+}
 
