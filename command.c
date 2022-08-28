@@ -85,7 +85,7 @@ pipeline pipeline_new(void)
 pipeline pipeline_destroy(pipeline self)
 {
     g_assert(self != NULL);
-    if (self != NULL && self->commands_queue != NULL)
+    if ( self->commands_queue != NULL)
     {
         g_list_free(self->commands_queue); /* liberar la memoria de la lista */
         self->commands_queue = NULL;
@@ -104,7 +104,11 @@ void pipeline_push_back(pipeline self, scommand sc)
     g_assert(!pipeline_is_empty(self));
 }
 
-void pipeline_pop_front(pipeline self);
+void pipeline_pop_front(pipeline self)
+{
+    g_assert(self != NULL && !pipeline_is_empty(self));
+    self->commands_queue = g_list_delete_link(self->commands_queue,self->commands_queue);
+}
 
 void pipeline_set_wait(pipeline self, const bool w);
 
