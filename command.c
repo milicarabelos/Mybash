@@ -51,6 +51,8 @@ char * scommand_to_string(const scommand self);
 //pipeline: Mili y Tomi
 struct pipeline_s
 {
+    GSList *commands_queue;
+    bool wait;
 };
 
 pipeline pipeline_new(void);
