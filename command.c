@@ -26,7 +26,6 @@ scommand scommand_new(void){
     return init;
 }
 
-
 scommand scommand_destroy(scommand self);
 //Juan
 void scommand_push_back(scommand self, char * argument) {
