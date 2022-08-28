@@ -26,8 +26,22 @@ scommand scommand_new(void){
     return init;
 }
 
-scommand scommand_destroy(scommand self);
-//Juan
+scommand scommand_destroy(scommand self){
+    //Juan
+    g_assert(self != NULL);
+    if ( self->command != NULL)
+    {
+        g_list_free(self->command); /* liberar la memoria de la lista */
+        self->command = NULL;
+    }
+
+    free(self);
+    self = NULL;
+
+    g_assert(self == NULL);
+    return self;
+}
+
 void scommand_push_back(scommand self, char * argument) {
 //Nacho
     assert(self!= NULL && argument !=NULL);
