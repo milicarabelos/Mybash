@@ -1,5 +1,5 @@
 #include <stdbool.h> 
-#include <glib-2.0/glib.h> //revisar esto
+#include <glib.h> //revisar esto
 #include "command.h"
 #include <assert.h>
 #include "strextra.h"  /* Interfaz                           */
@@ -127,7 +127,11 @@ unsigned int pipeline_length(const pipeline self)
     return g_list_length(self->commands_queue); 
 }
 
-scommand pipeline_front(const pipeline self);
+scommand pipeline_front(const pipeline self)
+{   
+    g_assert(self != NULL && !pipeline_is_empty(self));
+    return g_list_nth_data(self->commands_queue,0);
+}
 
 bool pipeline_get_wait(const pipeline self);
 
