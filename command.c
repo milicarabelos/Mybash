@@ -1,14 +1,18 @@
 #include <stdbool.h> 
-#include <glib.h> //revisar esto
+#include <glib.h>
 #include "command.h"
 #include <assert.h>
-#include "strextra.h"  /* Interfaz                           */
+#include "strextra.h" 
 
 //pruebacommit
 //scommand: Juan y Nacho
+
 struct scommand_s
 {
 //Juan
+    GList * command;
+    char * args_in;
+    char * args_out;
 };
 
 scommand scommand_new(void);
