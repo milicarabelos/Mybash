@@ -72,7 +72,7 @@ void scommand_set_redir_out(scommand self, char * filename) {
 bool scommand_is_empty(const scommand self){
     //Juan
     assert(self != NULL);
-    return self->command != NULL;
+    return self->command == NULL;
 }
 unsigned int scommand_length(const scommand self){
     //JUan
@@ -190,7 +190,7 @@ void pipeline_set_wait(pipeline self, const bool w)
 bool pipeline_is_empty(const pipeline self)
 {
     assert(self != NULL);
-    return self->commands_queue != NULL;
+    return self->commands_queue == NULL;
 }
 
 unsigned int pipeline_length(const pipeline self)
