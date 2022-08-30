@@ -218,11 +218,15 @@ char * pipeline_to_string(const pipeline self){
     GList* list = self->commands_queue;
     char * scommand_to_str;
 
-    for (unsigned int i = 0; i < pipeline_length(self); i++)
-        {
+if (list != NULL) {
+        scommand_to_str = scommand_to_string(g_list_nth_data(list, 0));
+        str = strmerge(str,scommand_to_str);
+    for (unsigned int i = 1; i < pipeline_length(self); i++)
+        {   
+            str = strmerge(str, " | ");
             scommand_to_str = scommand_to_string(g_list_nth_data(list, i));
             str = strmerge(str,scommand_to_str);
-            str = strmerge(str, " | ");
+            
         };
 
     if (!self->wait)
@@ -230,6 +234,8 @@ char * pipeline_to_string(const pipeline self){
         str = strmerge(str, " &");
     }
 
+    
+}
     return str;
 }
 
