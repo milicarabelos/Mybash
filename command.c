@@ -2,7 +2,8 @@
 #include <glib.h>
 #include "command.h"
 #include <assert.h>
-#include "strextra.h" 
+#include "strextra.h"
+#include <string.h>
 
 //pruebacommit
 //scommand: Juan y Nacho
@@ -106,7 +107,7 @@ char * scommand_to_string(const scommand self){
     char * args_in = scommand_get_redir_in(self);
     char * args_out = scommand_get_redir_out(self);
 
-    char * str = NULL;
+    char * str = strdup("");
     if  (list!=NULL) {
         str = scommand_front(self);
         for (unsigned int i = 1; i < scommand_length(self); i++)
@@ -213,7 +214,7 @@ bool pipeline_get_wait(const pipeline self)
 char * pipeline_to_string(const pipeline self){
     //Tomi y Mili 
     assert(self != NULL);
-    char * str = NULL;
+    char * str = strdup("");
     GList* list = self->commands_queue;
     
 
