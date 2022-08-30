@@ -1,23 +1,24 @@
-#include <stdbool.h> 
+#include <stdbool.h>
 #include <glib.h>
 #include "command.h"
 #include <assert.h>
 #include "strextra.h"
 #include <string.h>
 
-//pruebacommit
-//scommand: Juan y Nacho
+// pruebacommit
+// scommand: Juan y Nacho
 
 struct scommand_s
 {
-//Juan
-    GList * command;
-    char * args_in;
-    char * args_out;
+    // Juan
+    GList *command;
+    char *args_in;
+    char *args_out;
 };
 
-scommand scommand_new(void){
-    //Juan
+scommand scommand_new(void)
+{
+    // Juan
     scommand init;
     init = calloc(1, sizeof(struct scommand_s));
     init->args_in = NULL;
@@ -27,10 +28,11 @@ scommand scommand_new(void){
     return init;
 }
 
-scommand scommand_destroy(scommand self){
-    //Juan
+scommand scommand_destroy(scommand self)
+{
+    // Juan
     assert(self != NULL);
-    if ( self->command != NULL)
+    if (self->command != NULL)
     {
         g_list_free(self->command); /* liberar la memoria de la lista */
         self->command = NULL;
@@ -43,84 +45,95 @@ scommand scommand_destroy(scommand self){
     return self;
 }
 
-void scommand_push_back(scommand self, char * argument) {
-//Nacho
-    assert(self!= NULL && argument !=NULL);
-    //append: Adds a new element on to the end of the list.
-    //agrego al final de la lista de commands el argument (nuevo command)
-    self->command=g_list_append(self->command, argument);
-	}
-
-
-void scommand_pop_front(scommand self) {
-    //Nacho
-    assert(self!=NULL && !scommand_is_empty(self));
-    self->command= g_list_delete_link(self->command,self->command);
-
-}
-void scommand_set_redir_in(scommand self, char * filename) {
-    //Nacho
-    assert(self!=NULL);
-    self->args_in=filename;
+void scommand_push_back(scommand self, char *argument)
+{
+    // Nacho
+    assert(self != NULL && argument != NULL);
+    // append: Adds a new element on to the end of the list.
+    // agrego al final de la lista de commands el argument (nuevo command)
+    self->command = g_list_append(self->command, argument);
 }
 
-void scommand_set_redir_out(scommand self, char * filename) {
-    //Nacho
-    assert(self!=NULL);
-    self->args_out=filename;
+void scommand_pop_front(scommand self)
+{
+    // Nacho
+    assert(self != NULL && !scommand_is_empty(self));
+    self->command = g_list_delete_link(self->command, self->command);
+}
+void scommand_set_redir_in(scommand self, char *filename)
+{
+    // Nacho
+    assert(self != NULL);
+    self->args_in = filename;
 }
 
-bool scommand_is_empty(const scommand self){
-    //Juan
+void scommand_set_redir_out(scommand self, char *filename)
+{
+    // Nacho
+    assert(self != NULL);
+    self->args_out = filename;
+}
+
+bool scommand_is_empty(const scommand self)
+{
+    // Juan
     assert(self != NULL);
     return self->command == NULL;
 }
-unsigned int scommand_length(const scommand self){
-    //JUan
-    assert(self!=NULL);
-    return g_list_length(self->command); 
+unsigned int scommand_length(const scommand self)
+{
+    // JUan
+    assert(self != NULL);
+    return g_list_length(self->command);
 }
 
-char * scommand_front(const scommand self) {
-    //Nacho
-    assert(self!=NULL && !scommand_is_empty(self));
-    char * ret;
-    ret = g_list_nth_data(self->command,0);
+char *scommand_front(const scommand self)
+{
+    // Nacho
+    assert(self != NULL && !scommand_is_empty(self));
+    char *ret;
+    ret = g_list_nth_data(self->command, 0);
     return ret;
 }
 
-char * scommand_get_redir_in(const scommand self){
-    //Juan
+char *scommand_get_redir_in(const scommand self)
+{
+    // Juan
     assert(self != NULL);
     return self->args_in;
 }
 
-char * scommand_get_redir_out(const scommand self){
-    //Juan
+char *scommand_get_redir_out(const scommand self)
+{
+    // Juan
     assert(self != NULL);
     return self->args_out;
 }
 
-char * scommand_to_string(const scommand self){
+char *scommand_to_string(const scommand self)
+{
     assert(self != NULL);
-    GList * list = self->command;
-    char * args_in = scommand_get_redir_in(self);
-    char * args_out = scommand_get_redir_out(self);
+    GList *list = self->command;
+    char *args_in = scommand_get_redir_in(self);
+    char *args_out = scommand_get_redir_out(self);
 
-    char * str = strdup("");
-    if  (list!=NULL) {
+    char *str = strdup("");
+    if (list != NULL)
+    {
         str = scommand_front(self);
         for (unsigned int i = 1; i < scommand_length(self); i++)
         {
             str = strmerge(str, g_list_nth_data(list, i));
             str = strmerge(str, " ");
         };
-        
-        if (args_in != NULL){
+
+        if (args_in != NULL)
+        {
             str = strmerge(str, " < ");
             str = strmerge(str, args_in);
         };
-        if (args_out!= NULL) {
+        if (args_out != NULL)
+        {
             str = strmerge(str, " > ");
             str = strmerge(str, args_out);
         };
@@ -128,15 +141,13 @@ char * scommand_to_string(const scommand self){
 
     assert(
         scommand_is_empty(self) ||
-        scommand_get_redir_in(self)==NULL ||
-        scommand_get_redir_out(self)==NULL ||
-        strlen(str)>0
-    );
+        scommand_get_redir_in(self) == NULL ||
+        scommand_get_redir_out(self) == NULL ||
+        strlen(str) > 0);
     return str;
 }
 
-
-//pipeline: Mili y Tomi
+// pipeline: Mili y Tomi
 struct pipeline_s
 {
     GList *commands_queue;
@@ -150,24 +161,24 @@ pipeline pipeline_new(void)
     init->wait = true;
     init->commands_queue = NULL;
     assert(init != NULL && pipeline_is_empty(init) && pipeline_get_wait(init));
-    
+
     return init;
 }
 
 pipeline pipeline_destroy(pipeline self)
 {
     assert(self != NULL);
-    if ( self->commands_queue != NULL)
+    if (self->commands_queue != NULL)
     {
         g_list_free(self->commands_queue); /* liberar la memoria de la lista */
         self->commands_queue = NULL;
     }
     free(self);
-    self = NULL;    
+    self = NULL;
 
     assert(self == NULL);
     return self;
-}    
+}
 
 void pipeline_push_back(pipeline self, scommand sc)
 {
@@ -179,7 +190,7 @@ void pipeline_push_back(pipeline self, scommand sc)
 void pipeline_pop_front(pipeline self)
 {
     assert(self != NULL && !pipeline_is_empty(self));
-    self->commands_queue = g_list_delete_link(self->commands_queue,self->commands_queue);
+    self->commands_queue = g_list_delete_link(self->commands_queue, self->commands_queue);
 }
 
 void pipeline_set_wait(pipeline self, const bool w)
@@ -195,14 +206,15 @@ bool pipeline_is_empty(const pipeline self)
 }
 
 unsigned int pipeline_length(const pipeline self)
-{   assert(self!=NULL);
-    return g_list_length(self->commands_queue); 
+{
+    assert(self != NULL);
+    return g_list_length(self->commands_queue);
 }
 
 scommand pipeline_front(const pipeline self)
-{   
+{
     assert(self != NULL && !pipeline_is_empty(self));
-    return g_list_nth_data(self->commands_queue,0);
+    return g_list_nth_data(self->commands_queue, 0);
 }
 
 bool pipeline_get_wait(const pipeline self)
@@ -211,31 +223,29 @@ bool pipeline_get_wait(const pipeline self)
     return self->wait;
 }
 
-char * pipeline_to_string(const pipeline self){
-    //Tomi y Mili 
+char *pipeline_to_string(const pipeline self)
+{
+    // Tomi y Mili
     assert(self != NULL);
-    char * str = strdup("");
-    GList* list = self->commands_queue;
-    char * scommand_to_str;
+    char *str = strdup("");
+    GList *list = self->commands_queue;
+    char *scommand_to_str;
 
-if (list != NULL) {
+    if (list != NULL)
+    {
         scommand_to_str = scommand_to_string(g_list_nth_data(list, 0));
-        str = strmerge(str,scommand_to_str);
-    for (unsigned int i = 1; i < pipeline_length(self); i++)
-        {   
+        str = strmerge(str, scommand_to_str);
+        for (unsigned int i = 1; i < pipeline_length(self); i++)
+        {
             str = strmerge(str, " | ");
             scommand_to_str = scommand_to_string(g_list_nth_data(list, i));
-            str = strmerge(str,scommand_to_str);
-            
+            str = strmerge(str, scommand_to_str);
         };
 
-    if (!self->wait)
-    {
-        str = strmerge(str, " &");
+        if (!self->wait)
+        {
+            str = strmerge(str, " &");
+        }
     }
-
-    
-}
     return str;
 }
-
