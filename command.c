@@ -216,15 +216,14 @@ char * pipeline_to_string(const pipeline self){
     assert(self != NULL);
     char * str = strdup("");
     GList* list = self->commands_queue;
-    
+    char * scommand_to_str;
 
-    while (list != NULL)
-    {
-        char * scommand_to_str = scommand_to_string(list->data);
-        str = strmerge(str,scommand_to_str);
-        str = strmerge(str, " | ");
-        list = list->next;
-    }
+    for (unsigned int i = 0; i < pipeline_length(self); i++)
+        {
+            scommand_to_str = scommand_to_string(g_list_nth_data(list, i));
+            str = strmerge(str,scommand_to_str);
+            str = strmerge(str, " | ");
+        };
 
     if (!self->wait)
     {
