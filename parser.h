@@ -42,12 +42,26 @@ char * parser_next_argument(Parser parser, arg_kind_t *arg_type);
  * si es una redirección de entrada/salida. Si se encuentra un símbolo del
  * operador pipe (|) o un fin de línea (\n), el procesamiento no avanza, dejando
  * sin consumir dichos símbolos.
- * 
+ *
+ * ls -l -a  > salida.txt < entrada.txt | wc -l     &  \n
+ *
+ * cat /proc/cpuinfo | grep model
+ *  
+ *  Salida 1: "ls", ARG_NORMAL
+ *  Salida 2: "-l", ARG_NORMAL
+ *  Salida 3: "-a", ARG_NORMAL
+ *  Salida 4: "salida.txt", ARG_OUTPUT
+ *  Salida 5: "entrada.txt", ARG_INPUT
+ *
+ * aa algo.txt && bb lala.txt &
+ *_
  * EJEMPLO:
  *
  * arg_kind_t type;
  * char *arg;
  * arg = parser_next_argument(parser, &type);
+ * if (type == ARG_NORMAL) {
+ * } 
  *
  * - En `type` se guarda el tipo de argumento:
  *   + ARG_NORMAL: Era el nombre de un comando o uno de sus argumentos
