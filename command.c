@@ -24,7 +24,9 @@ scommand scommand_new(void)
     init->args_in = NULL;
     init->args_out = NULL;
     init->command = NULL;
-    assert(init != NULL && scommand_is_empty(init));
+    assert(init != NULL && scommand_is_empty(init) &&
+            scommand_get_redir_in(init) == NULL    &&
+            scommand_get_redir_out(init) == NULL);
     return init;
 }
 
@@ -52,6 +54,7 @@ void scommand_push_back(scommand self, char *argument)
     // append: Adds a new element on to the end of the list.
     // agrego al final de la lista de commands el argument (nuevo command)
     self->command = g_list_append(self->command, argument);
+    assert(!scommand_is_empty(self));
 }
 
 void scommand_pop_front(scommand self)
@@ -84,7 +87,9 @@ unsigned int scommand_length(const scommand self)
 {
     // JUan
     assert(self != NULL);
-    return g_list_length(self->command);
+    unsigned int length = g_list_length(self->command); 
+    assert((length == 0)== scommand_is_empty(self));
+    return length;
 }
 
 char *scommand_front(const scommand self)
@@ -93,6 +98,7 @@ char *scommand_front(const scommand self)
     assert(self != NULL && !scommand_is_empty(self));
     char *ret;
     ret = g_list_nth_data(self->command, 0);
+    assert(ret != NULL);
     return ret;
 }
 
@@ -208,7 +214,9 @@ bool pipeline_is_empty(const pipeline self)
 unsigned int pipeline_length(const pipeline self)
 {
     assert(self != NULL);
-    return g_list_length(self->commands_queue);
+    unsigned int length = g_list_length(self->commands_queue);
+    assert((length==0) == pipeline_is_empty(self));
+    return length;
 }
 
 scommand pipeline_front(const pipeline self)
@@ -247,5 +255,6 @@ char *pipeline_to_string(const pipeline self)
             str = strmerge(str, " &");
         }
     }
+    assert(pipeline_is_empty(self) || pipeline_get_wait(self) || strlen(str) > 0);
     return str;
 }
