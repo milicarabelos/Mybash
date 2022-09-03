@@ -3,6 +3,7 @@
 #include "command.h"
 
 bool builtin_is_internal(scommand cmd);
+//Nacho
 /*
  * Indica si el comando alojado en `cmd` es un comando interno
  *
@@ -12,6 +13,7 @@ bool builtin_is_internal(scommand cmd);
 
 
 bool builtin_alone(pipeline p);
+//Juan
 /*
  * Indica si el pipeline tiene solo un elemento y si este se corresponde a un
  * comando interno.
@@ -27,6 +29,7 @@ bool builtin_alone(pipeline p);
  */
 
 void builtin_run(scommand cmd);
+//Los dos B)
 /*
  * Ejecuta un comando interno
  *
