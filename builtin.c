@@ -2,17 +2,17 @@
 #include <assert.h>
 #include "command.h"
 
-bool builtin_is_internal(scommand cmd){
-//Nacho
-/*
- * Indica si el comando alojado en `cmd` es un comando interno
- *
- * REQUIRES: cmd != NULL
- *
- */
+bool builtin_is_internal(scommand cmd) {
+    //Nacho
+    assert(cmd!=NULL);
+    return strcmp(scommand_front(cmd), "exit") == 0 || 
+    strcmp(scommand_front(cmd), "cd") == 0 || 
+    strcmp(scommand_front(cmd), "help") == 0
+    //El strcmp: Compara los dos strings y si son iguales retorna 0.
 }
 
 bool builtin_alone(pipeline p){
+    //Juan
     assert(p != NULL);
     return pipeline_length(p) == 1 && builtin_is_internal(pipeline_front(p));
 }
