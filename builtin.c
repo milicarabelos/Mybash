@@ -19,12 +19,14 @@ bool builtin_alone(pipeline p){
 }
 
 void builtin_run(scommand cmd){
+    assert(builtin_is_internal(cmd));
+    if (strcmp(scommand_front(cmd), "exit") == 0) {
 
-//Los dos B)
-/*
- * Ejecuta un comando interno
- *
- * REQUIRES: {builtin_is_internal(cmd)}
- *
- */
+    }
+    else if (strcmp(scommand_front(cmd), "cd") == 0) {
+
+    }
+    else (strcmp(scommand_front(cmd), "help") == 0) {
+
+    }
 }
