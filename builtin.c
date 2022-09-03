@@ -44,14 +44,18 @@ void builtin_run(scommand cmd)
         {
             // autores en oreden del abecedario
             printf("
-                   My Bash 2022 by Spice Girls B)
+                   My Bash 2022 by Spice Girls B)\n
 
-                Authors : Juan Cruz Pereyra Carrillo
-                              Ignacio Scavuzzo
-                                  Milagros Carabelos
-                                      Tomas Pablo Bazan
+                Authors:\n
+                Juan Cruz Pereyra Carrillo\n
+                              Ignacio Scavuzzo\n
+                                  Milagros Carabelos\n
+                                      Tomas Pablo Bazan\n
 
-                                          Interanal commands : cd : Navega entre directorios del sistema.exit : Cierra limpiamente la terminal.help : Muestra informacion y ayuda.
+                                          Interanal commands:\n
+                                          cd : Navega entre directorios del sistema.\n
+                                          exit : Cierra limpiamente la terminal.\n
+                                          help : Muestra informacion y ayuda.\n
 
                                                                                                                                                       ");
         }
