@@ -27,6 +27,24 @@ void builtin_run(scommand cmd){
 
     }
     else (strcmp(scommand_front(cmd), "help") == 0) {
+        //autores en oreden del abecedario
+        printf(
+        "     My Bash 2022
+            by Spice Girls B)
 
+            Authors:
+            Juan Cruz Pereyra Carrillo
+            Ignacio Scavuzzo
+            Milagros Carabelos
+            Tomas Pablo Bazan
+
+
+            Interanal commands:
+            cd: Navega entre directorios del sistema.
+            exit: Cierra limpiamente la terminal.
+            help: Muestra informacion y ayuda.
+
+        
+        ");
     }
 }
