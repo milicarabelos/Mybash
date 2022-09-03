@@ -24,12 +24,16 @@ void builtin_run(scommand cmd){
 
     }
     else if (strcmp(scommand_front(cmd), "cd") == 0) {
-
+        if (scommand_get_redir_in(cmd) == NULL){
+            chdir("~");
+        } else {
+            chdir(scommand_get_redir_in(cmd));
+        }
     }
     else (strcmp(scommand_front(cmd), "help") == 0) {
         //autores en oreden del abecedario
-        printf(
-        "     My Bash 2022
+        printf("
+            My Bash 2022
             by Spice Girls B)
 
             Authors:
@@ -44,7 +48,7 @@ void builtin_run(scommand cmd){
             exit: Cierra limpiamente la terminal.
             help: Muestra informacion y ayuda.
 
-        
+
         ");
     }
 }
