@@ -11,37 +11,38 @@ static scommand parse_scommand(Parser p)
     /* Devuelve NULL cuando hay un error de parseo */
     // simple_command for save the scommand, command_text for analize the string,
     // argument_type for know wicht tipe of input is,
-    assert(p != NULL);
+    assert(p != NULL && !parser_at_eof(p));
     scommand simple_command = scommand_new();
+
     char *command_text = strdup("");
     arg_kind_t argument_type;
-    bool is_pipe = false;
 
-    while (is_pipe == false)
+    parser_skip_blanks(p);
+    command_text = parser_next_argument(p, &argument_type);
+
+    if (command_text == NULL)
     {
-        parser_skip_blanks(p);
+        free(simple_command);
+        simple_command = NULL;
+    }
+    
+
+    while (command_text != NULL)
+    {
+        if (argument_type == ARG_NORMAL)
+        {
+            scommand_push_back(simple_command, command_text);
+        }
+        else if (argument_type == ARG_INPUT)
+        {
+            scommand_set_redir_in(simple_command, command_text);
+        }
+        else if (argument_type == ARG_OUTPUT)
+        {
+            scommand_set_redir_out(simple_command, command_text);
+        }
+        command_text = strdup("");
         command_text = parser_next_argument(p, &argument_type);
-        if (command_text != NULL)
-        {
-            if (argument_type == ARG_NORMAL)
-            {
-                scommand_push_back(simple_command, command_text);
-            }
-            else if (argument_type == ARG_INPUT)
-            {
-                scommand_set_redir_in(simple_command, command_text);
-            }
-            else if (argument_type == ARG_OUTPUT)
-            {
-                scommand_set_redir_out(simple_command, command_text);
-            }
-            parser_op_pipe(p, &is_pipe);
-        }
-        else
-        {
-            simple_command = scommand_destroy(simple_command);
-            return NULL;
-        }
     }
 
     free(command_text);
