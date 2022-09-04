@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "command.h"
 #include "builtin.h"
 
@@ -30,8 +31,6 @@ void builtin_run(scommand cmd)
     {
         exit(EXIT_SUCCESS);
     }
-    else 
-    { 
     if (strcmp(scommand_front(cmd), "cd") == 0)
     {
         if (scommand_get_redir_in(cmd) == NULL)
@@ -43,25 +42,22 @@ void builtin_run(scommand cmd)
             chdir(scommand_get_redir_in(cmd));
         }
     }
-    else
-        (strcmp(scommand_front(cmd), "help") == 0)
-        {
+    if (strcmp(scommand_front(cmd), "help") == 0)
+    {
             // autores en oreden del abecedario
-            printf("
-                   My Bash 2022 by Spice Girls B)\n
+            printf("\n"
+                   "My Bash 2022 by Spice Girls\n"
 
-                Authors:\n
-                Juan Cruz Pereyra Carrillo\n
-                              Ignacio Scavuzzo\n
-                                  Milagros Carabelos\n
-                                      Tomas Pablo Bazan\n
+                "Authors:\n"
+                "Juan Cruz Pereyra Carrillo\n"
+                              "Ignacio Scavuzzo\n"
+                                  "Milagros Carabelos\n"
+                                      "Tomas Pablo Bazan\n"
 
-                                          Interanal commands:\n
-                                          cd : Navega entre directorios del sistema.\n
-                                          exit : Cierra limpiamente la terminal.\n
-                                          help : Muestra informacion y ayuda.\n")
+                                          "Interanal commands:\n"
+                                          "cd : Navega entre directorios del sistema.\n"
+                                          "exit : Cierra limpiamente la terminal.\n"
+                                          "help : Muestra informacion y ayuda.\n");
 
-                                                                                                                                                      ");
-        }
-}
+    }
 }
