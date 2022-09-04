@@ -12,7 +12,7 @@ bool builtin_is_internal(scommand cmd)
     assert(cmd != NULL);
     return strcmp(scommand_front(cmd), "exit") == 0 ||
            strcmp(scommand_front(cmd), "cd") == 0 ||
-           strcmp(scommand_front(cmd), "help") == 0
+           strcmp(scommand_front(cmd), "help") == 0;
     // El strcmp: Compara los dos strings y si son iguales retorna 0.
 }
 
@@ -30,7 +30,9 @@ void builtin_run(scommand cmd)
     {
         exit(EXIT_SUCCESS);
     }
-    else if (strcmp(scommand_front(cmd), "cd") == 0)
+    else 
+    { 
+    if (strcmp(scommand_front(cmd), "cd") == 0)
     {
         if (scommand_get_redir_in(cmd) == NULL)
         {
@@ -57,8 +59,9 @@ void builtin_run(scommand cmd)
                                           Interanal commands:\n
                                           cd : Navega entre directorios del sistema.\n
                                           exit : Cierra limpiamente la terminal.\n
-                                          help : Muestra informacion y ayuda.\n
+                                          help : Muestra informacion y ayuda.\n")
 
                                                                                                                                                       ");
         }
+}
 }
