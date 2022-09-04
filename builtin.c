@@ -31,8 +31,6 @@ void builtin_run(scommand cmd)
     {
         exit(EXIT_SUCCESS);
     }
-    else 
-    { 
     if (strcmp(scommand_front(cmd), "cd") == 0)
     {
         if (scommand_get_redir_in(cmd) == NULL)
@@ -44,9 +42,8 @@ void builtin_run(scommand cmd)
             chdir(scommand_get_redir_in(cmd));
         }
     }
-    else
-        (strcmp(scommand_front(cmd), "help") == 0)
-        {
+    if (strcmp(scommand_front(cmd), "help") == 0)
+    {
             // autores en oreden del abecedario
             printf("\n"
                    "My Bash 2022 by Spice Girls\n"
@@ -62,7 +59,5 @@ void builtin_run(scommand cmd)
                                           "exit : Cierra limpiamente la terminal.\n"
                                           "help : Muestra informacion y ayuda.\n");
 
-                                                                                                                                                      ");
-        }
-}
+    }
 }
