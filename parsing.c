@@ -59,7 +59,7 @@ pipeline parse_pipeline(Parser p)
     error = (cmd == NULL); /* Comando inválido al empezar */
 
     while (!error && another_pipe)
-    {
+    {   
         pipeline_push_back(result, cmd);
         cmd = parse_scommand(p);
         another_pipe = (cmd != NULL);
@@ -93,5 +93,10 @@ pipeline parse_pipeline(Parser p)
         parser_destroy(p);
     }
 
+    if(error){
+        pipeline_destroy(result);
+        result = NULL;
+    }
+    
     return result; // MODIFICAR
 }
