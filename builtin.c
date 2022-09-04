@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "command.h"
 #include "builtin.h"
 
@@ -47,19 +48,19 @@ void builtin_run(scommand cmd)
         (strcmp(scommand_front(cmd), "help") == 0)
         {
             // autores en oreden del abecedario
-            printf("
-                   My Bash 2022 by Spice Girls B)\n
+            printf("\n"
+                   "My Bash 2022 by Spice Girls\n"
 
-                Authors:\n
-                Juan Cruz Pereyra Carrillo\n
-                              Ignacio Scavuzzo\n
-                                  Milagros Carabelos\n
-                                      Tomas Pablo Bazan\n
+                "Authors:\n"
+                "Juan Cruz Pereyra Carrillo\n"
+                              "Ignacio Scavuzzo\n"
+                                  "Milagros Carabelos\n"
+                                      "Tomas Pablo Bazan\n"
 
-                                          Interanal commands:\n
-                                          cd : Navega entre directorios del sistema.\n
-                                          exit : Cierra limpiamente la terminal.\n
-                                          help : Muestra informacion y ayuda.\n");
+                                          "Interanal commands:\n"
+                                          "cd : Navega entre directorios del sistema.\n"
+                                          "exit : Cierra limpiamente la terminal.\n"
+                                          "help : Muestra informacion y ayuda.\n");
 
                                                                                                                                                       ");
         }
