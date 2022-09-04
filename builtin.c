@@ -1,8 +1,10 @@
 #include <stdbool.h>
+#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include "command.h"
+#include "builtin.h"
 
 bool builtin_is_internal(scommand cmd)
 {
