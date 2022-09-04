@@ -10,8 +10,42 @@
 static scommand parse_scommand(Parser p)
 {
     /* Devuelve NULL cuando hay un error de parseo */
-    return NULL;
+    // simple_command for save the scommand, command_text for analize the string,
+    // argument_type for know wicht tipe of input is,
+    scommand simple_command = scommand_new();
+    char *command_text = strdup("");
+    arg_kind_t *argument_type = calloc(1, sizeof(arg_kind_t));
+    bool *is_pipe = false;
+
+    // skip spaces and tabs, save the input text in command_text and argument type.
+
+    // analize wich input it is and then act
+
+    while (is_pipe == false)
+    {
+        parser_skip_blanks(p);
+        command_text = parser_next_argument(p, argument_type);
+        if (command_text == NULL)
+        {
+            return NULL;
+        }
+        if (*argument_type == ARG_NORMAL)
+        {
+            scommand_push_back(simple_command, command_text);
+        }
+        else if (*argument_type == ARG_INPUT)
+        {
+            scommand_set_redir_in(simple_command, command_text);
+        }
+        else if (*argument_type == ARG_OUTPUT)
+        {
+            scommand_set_redir_out(simple_command, command_text);
+        }
+        parser_op_pipe(p, is_pipe);
+    }
+    return simple_command;
 }
+
 
 pipeline parse_pipeline(Parser p)
 {
