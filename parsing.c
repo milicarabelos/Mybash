@@ -65,7 +65,7 @@ pipeline parse_pipeline(Parser p)
     {
         pipeline_push_back(result, cmd);
         cmd = parse_scommand(p);
-        another_pipe = (cmd != NULL);
+        parser_op_pipe(p,&another_pipe);
     }
 
     parser_op_background(p, &wait);
