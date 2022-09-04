@@ -59,7 +59,7 @@ void builtin_run(scommand cmd)
                                           Interanal commands:\n
                                           cd : Navega entre directorios del sistema.\n
                                           exit : Cierra limpiamente la terminal.\n
-                                          help : Muestra informacion y ayuda.\n")
+                                          help : Muestra informacion y ayuda.\n");
 
                                                                                                                                                       ");
         }
