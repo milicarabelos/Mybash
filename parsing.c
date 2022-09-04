@@ -100,5 +100,5 @@ pipeline parse_pipeline(Parser p)
         pipeline_destroy(result);
         result = NULL;
     }
-    return result; // MODIFICAR
+    return result;
 }
