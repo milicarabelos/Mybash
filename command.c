@@ -102,20 +102,31 @@ char *scommand_front(const scommand self)
     return ret;
 }
 
-char *scommand_get_redir_in(const scommand self)
-{
-    // Juan
-    assert(self != NULL);
-    return self->args_in;
-}
-
-char *get_scommand_argument(const scommand self, int i)
+char *scommand_get_argument(const scommand self, int i)
 {
     // Juan
     assert(self != NULL && !scommand_is_empty(self));
     assert(i>0);
     char *ret = g_list_nth_data(self->command, i);
     return ret;
+}
+
+void scommand_list_to_array(const scommand self, char ** args){
+
+    unsigned int length = scommand_length(self);
+
+    for (unsigned int i = 0; i < length; i++)
+    {
+        args[i] = scommand_get_argument(self,i); 
+    }
+
+}
+
+char *scommand_get_redir_in(const scommand self)
+{
+    // Juan
+    assert(self != NULL);
+    return self->args_in;
 }
 
 char *scommand_get_redir_out(const scommand self)
