@@ -55,6 +55,19 @@ void execute_pipeline(pipeline apipe)
                         printf("Error while closing the file.");
                     }
                 }
+                }
+                if (out != NULL)
+                {
+                    path = strmerge("./", out);
+                    file = open(path, O_CREAT);
+                    dup2(file, 1);
+                    file = close(file);
+                    if (file < 0)
+                    {
+                        printf("Error while closing the file.");
+                    }
+                    execvp(args[0], args);
+                }
                 else // padre
                 {
                     if (pipeline_get_wait(apipe))
