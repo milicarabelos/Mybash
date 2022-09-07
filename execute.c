@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
 #include <sys/types.h> //wait
 #include <sys/wait.h>  //wait
 #include <fcntl.h>
 
+#include "strextra.h"
 #include "command.h"
 #include "execute.h"
 #include "parser.h"
@@ -13,6 +15,12 @@
 
 void execute_pipeline(pipeline apipe)
 {
+    scommand simple_command = pipeline_front(apipe);
+    unsigned int length = scommand_length(simple_command);
+    char *args[length];
+    int file;
+    char *path;
+
     if (pipeline_length(apipe) == 1)
     {
         pid_t pid;
@@ -20,38 +28,46 @@ void execute_pipeline(pipeline apipe)
 
         if (pid < 0) // error
         {
-            printf("fork faliure %d \n", pid);
-            return exit(1);
+            printf("Fork failure, where PID: %d \n", pid);
+            exit(1);
         }
-        else if (pid == 0) // hijo
+        if (pid == 0) // hijo
         {
-            scommand simple_command = pipeline_front(apipe);
-            unsigned int lenght = scommand_length(simple_command);
-            const char **args[lenght];
-            scommand_list_to_array(simple_command, args);
+            char *in = scommand_get_redir_in(simple_command);
+            char *out = scommand_get_redir_out(simple_command);
 
-            if(//si tiene archivo de entrada)
-            {   
-                file =
-                dup2(file, 0);
-            }
-            if(//si tiene archivo de salida)
-            {   
-                file = 
-                dup2(file, 1);
-            }
+            scommand_to_array(simple_command, args);
 
-            execvp(args[0], args);
-        }
-        else // padre
-        {   
-            if(pipeline_get_wait(apipe)){
-            wait(NULL);
+            if (in != NULL)
+            {
+                path = strmerge("./", in);
+                file = open(path, O_RDONLY);
+                if (file < 0)
+                {
+                    printf("Error, file doesn't exist.");
+                }
+                else
+                {
+                    dup2(file, 0);
+                    file = close(file);
+                    if (file < 0)
+                    {
+                        printf("Error while closing the file.");
+                    }
+                }
+                else // padre
+                {
+                    if (pipeline_get_wait(apipe))
+                    {
+                        wait(NULL);
+                    }
+                }
             }
         }
-    }
-    else{ //dos pipeline
-        
-        //usar funcion pipe 
+        else
+        { // dos pipeline
+
+            // usar funcion pipe
+        }
     }
 }
