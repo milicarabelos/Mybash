@@ -1,11 +1,8 @@
 #include <stdbool.h>
-#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include "command.h"
-#include "builtin.h"
 
 bool builtin_is_internal(scommand cmd)
 {
@@ -13,8 +10,7 @@ bool builtin_is_internal(scommand cmd)
     assert(cmd != NULL);
     return strcmp(scommand_front(cmd), "exit") == 0 ||
            strcmp(scommand_front(cmd), "cd") == 0 ||
-           strcmp(scommand_front(cmd), "help") == 0;
-    // El strcmp: Compara los dos strings y si son iguales retorna 0.
+           strcmp(scommand_front(cmd), "help") == 0
 }
 
 bool builtin_alone(pipeline p)
@@ -31,33 +27,38 @@ void builtin_run(scommand cmd)
     {
         exit(EXIT_SUCCESS);
     }
-    if (strcmp(scommand_front(cmd), "cd") == 0)
+    else if (strcmp(scommand_front(cmd), "cd") == 0)
     {
-        if (scommand_get_redir_in(cmd) == NULL)
+        if (get_scommand_argument(cmd, 2) != NULL)
+        {
+            printf("cd: Too many arguments");
+        }
+
+        arg = get_scommand_argument(cmd, 1);
+        if (arg == NULL)
         {
             chdir("~");
         }
         else
         {
-            chdir(scommand_get_redir_in(cmd));
+            chdir(arg);
         }
     }
-    if (strcmp(scommand_front(cmd), "help") == 0)
-    {
-            // autores en oreden del abecedario
-            printf("\n"
-                   "My Bash 2022 by Spice Girls\n"
+    else
+        (strcmp(scommand_front(cmd), "help") == 0)
+        {
+            printf("
+                My Bash 2022 by Spice Girls B)\n\n
+                Authors:
+                    * Tomas Pablo Bazan\n
+                    * Milagros Carabelos\n
+                    * Juan Cruz Pereyra Carrillo\n
+                    * Ignacio Scavuzzo\n\n
+                Interanal commands : 
+                    cd : Navigate the file system in your device\n
+                    exit : Clean close the terminal\n
+                    help : Show this text!\n
 
-                "Authors:\n"
-                "Juan Cruz Pereyra Carrillo\n"
-                              "Ignacio Scavuzzo\n"
-                                  "Milagros Carabelos\n"
-                                      "Tomas Pablo Bazan\n"
-
-                                          "Interanal commands:\n"
-                                          "cd : Navega entre directorios del sistema.\n"
-                                          "exit : Cierra limpiamente la terminal.\n"
-                                          "help : Muestra informacion y ayuda.\n");
-
-    }
+                                                                                                                                                      ");
+        }
 }

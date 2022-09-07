@@ -108,6 +108,16 @@ char * scommand_front(const scommand self);
  * Ensures: result!=NULL
  */
 
+char * get_scommand_argument(const scommand self, int i);
+/*
+ * Toma un indice y devuelve el argumento de la lista "command"
+ * que se encuentre en esa poscicion. 
+ *   self: comando simple al cual tomarle la cadena del frente.
+ *   index: indice del argumento que queremos obtener
+ *   Returns: argumento en la poscicion dada.
+ * Requires: self!=NULL && !scommand_is_empty(self)
+ */
+
 char * scommand_get_redir_in(const scommand self);
 char * scommand_get_redir_out(const scommand self);
 /*

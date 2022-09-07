@@ -109,6 +109,15 @@ char *scommand_get_redir_in(const scommand self)
     return self->args_in;
 }
 
+char *get_scommand_argument(const scommand self, int i)
+{
+    // Juan
+    assert(self != NULL && !scommand_is_empty(self));
+    assert(i>0);
+    char *ret = g_list_nth_data(self->command, i);
+    return ret;
+}
+
 char *scommand_get_redir_out(const scommand self)
 {
     // Juan
