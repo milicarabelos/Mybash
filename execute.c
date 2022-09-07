@@ -15,15 +15,15 @@
 
 void execute_pipeline(pipeline apipe)
 {
-    scommand simple_command = pipeline_front(apipe);
-    unsigned int length = scommand_length(simple_command);
-    char *args[length];
+    scommand simple_command;
+    unsigned int length;
     int file;
     char *path;
+    pid_t pid;
+    int tube[2];
 
     if (pipeline_length(apipe) == 1)
     {
-        pid_t pid;
         pid = fork();
 
         if (pid < 0) // error
@@ -33,9 +33,12 @@ void execute_pipeline(pipeline apipe)
         }
         if (pid == 0) // hijo
         {
+            simple_command = pipeline_front(apipe);
             char *in = scommand_get_redir_in(simple_command);
             char *out = scommand_get_redir_out(simple_command);
 
+            length = scommand_length(simple_command);
+            char *args[length];
             scommand_to_array(simple_command, args);
 
             if (in != NULL)
@@ -81,5 +84,60 @@ void execute_pipeline(pipeline apipe)
     { // dos pipeline
 
         // usar funcion pipe
+        pid = fork();
+        pipe(tube);
+
+        if (pid < 0) // error
+        {
+            printf("fork first child faliure %d \n", pid);
+            exit(1);
+        }
+        else if (pid == 0) // primer hijo hijo
+        {
+            // creando los argumentos para execvp()
+            scommand simple_command = pipeline_front(apipe);
+            unsigned int lenght = scommand_length(simple_command);
+            char *args[lenght];
+            scommand_to_array(simple_command, args);
+
+            //ver
+            dup2(tube[1], 1);
+            close(tube[1]);
+            execvp(args[0], args);
+        }
+
+        else // padre primerizo
+        {
+            pid = fork();
+
+            if (pid < 0) // error
+            {
+                printf("fork second child faliure %d \n", pid);
+                exit(1);
+            }
+            else if (pid == 0) // segundo hijo
+            {
+                pipeline_pop_front(apipe);
+                scommand simple_command = pipeline_front(apipe);
+                unsigned int lenght = scommand_length(simple_command);
+                char *args2[lenght];
+                scommand_to_array(simple_command, args2);
+ 
+                dup2(tube[0], 0);
+                close(tube[0]);
+                execvp(args2[0], args2);
+
+            }
+            else //padre finalmente
+            {
+                if (!pipeline_get_wait(apipe)) // si tenemos "&"
+                {
+                    wait(NULL); // un hijo
+                    wait(NULL); // dos hijos
+                }
+            }
+            close(tube[0]);
+            close(tube[1]);
+        }
     }
 }
