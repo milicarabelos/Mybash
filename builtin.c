@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "command.h"
+#include "builtin.h"
+#include <stdio.h>
+#include <unistd.h>
 
 bool builtin_is_internal(scommand cmd)
 {
@@ -10,7 +13,7 @@ bool builtin_is_internal(scommand cmd)
     assert(cmd != NULL);
     return strcmp(scommand_front(cmd), "exit") == 0 ||
            strcmp(scommand_front(cmd), "cd") == 0 ||
-           strcmp(scommand_front(cmd), "help") == 0
+           strcmp(scommand_front(cmd), "help") == 0;
 }
 
 bool builtin_alone(pipeline p)
@@ -27,14 +30,15 @@ void builtin_run(scommand cmd)
     {
         exit(EXIT_SUCCESS);
     }
-    else if (strcmp(scommand_front(cmd), "cd") == 0)
+
+    if (strcmp(scommand_front(cmd), "cd") == 0)
     {
-        if (get_scommand_argument(cmd, 2) != NULL)
+        if (scommand_get_argument(cmd, 2) != NULL)
         {
             printf("cd: Too many arguments");
         }
 
-        arg = get_scommand_argument(cmd, 1);
+        char *arg = scommand_get_argument(cmd, 1);
         if (arg == NULL)
         {
             chdir("~");
@@ -44,21 +48,8 @@ void builtin_run(scommand cmd)
             chdir(arg);
         }
     }
-    else
-        (strcmp(scommand_front(cmd), "help") == 0)
+    if (strcmp(scommand_front(cmd), "help") == 0)
         {
-            printf("
-                My Bash 2022 by Spice Girls B)\n\n
-                Authors:
-                    * Tomas Pablo Bazan\n
-                    * Milagros Carabelos\n
-                    * Juan Cruz Pereyra Carrillo\n
-                    * Ignacio Scavuzzo\n\n
-                Interanal commands : 
-                    cd : Navigate the file system in your device\n
-                    exit : Clean close the terminal\n
-                    help : Show this text!\n
-
-                                                                                                                                                      ");
+            printf("My Bash 2022 by Spice Girls B)\n\nAuthors:* Tomas Pablo Bazan\n* Milagros Carabelos\n* Juan Cruz Pereyra Carrillo\n* Ignacio Scavuzzo\n\nInteranal commands :     cd : Navigate the file system in your device\n    exit : Clean close the terminal\n    help : Show this text!\n");
         }
 }
