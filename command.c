@@ -111,8 +111,9 @@ char *scommand_get_argument(const scommand self, int i)
     return ret;
 }
 
-void scommand_list_to_array(const scommand self, char ** args){
+void scommand_to_array(const scommand self, char ** args){
 
+    assert(self != NULL);
     unsigned int length = scommand_length(self);
 
     for (unsigned int i = 0; i < length; i++)

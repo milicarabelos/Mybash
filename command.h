@@ -108,7 +108,7 @@ char * scommand_front(const scommand self);
  * Ensures: result!=NULL
  */
 
-char * get_scommand_argument(const scommand self, int i);
+char * scommand_get_argument(const scommand self, int i);
 /*
  * Toma un indice y devuelve el argumento de la lista "command"
  * que se encuentre en esa poscicion. 
@@ -116,6 +116,15 @@ char * get_scommand_argument(const scommand self, int i);
  *   index: indice del argumento que queremos obtener
  *   Returns: argumento en la poscicion dada.
  * Requires: self!=NULL && !scommand_is_empty(self)
+ */
+
+void scommand_to_array(const scommand self, char ** args);
+/*
+ * Toma un array de string y en cada posicion escribe el argumento del scommand,
+ * que se encuentra en la posicion equivalente. 
+ *   self: comando simple al cual se accede a la lista.
+ *   args: array al cual le cargamos los datos.
+ * Requires: self!=NULL
  */
 
 char * scommand_get_redir_in(const scommand self);
