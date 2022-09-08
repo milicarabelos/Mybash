@@ -26,10 +26,9 @@ static char ** args (pipeline apipe){
         char * str = scommand_front(aux);
         args = realloc (elemnum,sizeof(str));
     }
-    
+
     return args
 } */
-
 
 void execute_pipeline(pipeline apipe)
 {
@@ -55,7 +54,7 @@ void execute_pipeline(pipeline apipe)
             char *in = scommand_get_redir_in(simple_command);
             char *out = scommand_get_redir_out(simple_command);
             length = scommand_length(simple_command);
-            char **args = calloc(length,sizeof(char*));
+            char **args = calloc(length, sizeof(char *));
             scommand_to_array(simple_command, args);
 
             if (in != NULL)
@@ -86,14 +85,14 @@ void execute_pipeline(pipeline apipe)
                 {
                     printf("Error while closing the file.");
                 }
-                execvp(args[0], args);
             }
-            else // padre
+            execvp(args[0], args);
+        }
+        else // padre
+        {
+            if (pipeline_get_wait(apipe))
             {
-                if (pipeline_get_wait(apipe))
-                {
-                    wait(NULL);
-                }
+                wait(NULL);
             }
         }
     }
@@ -114,10 +113,10 @@ void execute_pipeline(pipeline apipe)
             // creando los argumentos para execvp()
             scommand simple_command = pipeline_front(apipe);
             length = scommand_length(simple_command);
-            char **args = calloc(length,sizeof(char*));
+            char **args = calloc(length, sizeof(char *));
             scommand_to_array(simple_command, args);
 
-            //ver
+            // ver
             dup2(tube[1], 1);
             close(tube[1]);
             execvp(args[0], args);
@@ -137,15 +136,14 @@ void execute_pipeline(pipeline apipe)
                 pipeline_pop_front(apipe);
                 scommand simple_command = pipeline_front(apipe);
                 length2 = scommand_length(simple_command);
-                char ** args2 = calloc(length2,sizeof(char*));
+                char **args2 = calloc(length2, sizeof(char *));
                 scommand_to_array(simple_command, args2);
- 
+
                 dup2(tube[0], 0);
                 close(tube[0]);
                 execvp(args2[0], args2);
-
             }
-            else //padre finalmente
+            else // padre finalmente
             {
                 if (pipeline_get_wait(apipe)) // si tenemos "&"
                 {
