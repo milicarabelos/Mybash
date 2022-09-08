@@ -13,10 +13,28 @@
 #include "parsing.h"
 #include "builtin.h"
 
+/* FUNCION KK
+static char ** args (pipeline apipe){
+
+    char ** args = NULL;
+    scommand simple_comand = pipeline_front(apipe);
+    scommand aux = simple_comand;
+    unsigned int elemnum;
+
+    while (aux != NULL)
+    {
+        char * str = scommand_front(aux);
+        args = realloc (elemnum,sizeof(str));
+    }
+    
+    return args
+} */
+
+
 void execute_pipeline(pipeline apipe)
 {
     scommand simple_command;
-    unsigned int length;
+    unsigned int length, length2;
     int file;
     char *path;
     pid_t pid;
@@ -36,9 +54,8 @@ void execute_pipeline(pipeline apipe)
             simple_command = pipeline_front(apipe);
             char *in = scommand_get_redir_in(simple_command);
             char *out = scommand_get_redir_out(simple_command);
-
             length = scommand_length(simple_command);
-            char *args[length];
+            char **args = calloc(length,sizeof(char*));
             scommand_to_array(simple_command, args);
 
             if (in != NULL)
@@ -96,8 +113,8 @@ void execute_pipeline(pipeline apipe)
         {
             // creando los argumentos para execvp()
             scommand simple_command = pipeline_front(apipe);
-            unsigned int lenght = scommand_length(simple_command);
-            char *args[lenght];
+            length = scommand_length(simple_command);
+            char **args = calloc(length,sizeof(char*));
             scommand_to_array(simple_command, args);
 
             //ver
@@ -119,8 +136,8 @@ void execute_pipeline(pipeline apipe)
             {
                 pipeline_pop_front(apipe);
                 scommand simple_command = pipeline_front(apipe);
-                unsigned int lenght = scommand_length(simple_command);
-                char *args2[lenght];
+                length2 = scommand_length(simple_command);
+                char ** args2 = calloc(length2,sizeof(char*));
                 scommand_to_array(simple_command, args2);
  
                 dup2(tube[0], 0);
@@ -130,7 +147,7 @@ void execute_pipeline(pipeline apipe)
             }
             else //padre finalmente
             {
-                if (!pipeline_get_wait(apipe)) // si tenemos "&"
+                if (pipeline_get_wait(apipe)) // si tenemos "&"
                 {
                     wait(NULL); // un hijo
                     wait(NULL); // dos hijos
