@@ -20,8 +20,7 @@ static scommand parse_scommand(Parser p)
 
     if (command_text == NULL)
     {
-        free(simple_command);
-        simple_command = NULL;
+        simple_command = scommand_destroy(simple_command);
     }
 
     while (command_text != NULL)
@@ -38,7 +37,7 @@ static scommand parse_scommand(Parser p)
         {
             scommand_set_redir_out(simple_command, command_text);
         }
-        command_text = strdup(""); //sobra?
+        command_text = strdup(""); // sobra?
         command_text = parser_next_argument(p, &argument_type);
     }
 
@@ -63,7 +62,7 @@ pipeline parse_pipeline(Parser p)
         pipeline_push_back(result, cmd);
     }
 
-    parser_skip_blanks(p); //sobra pq parser_next_argument llega caracter especial?
+    parser_skip_blanks(p); // sobra pq parser_next_argument llega caracter especial?
     parser_op_pipe(p, &another_pipe);
 
     if (another_pipe)
@@ -86,7 +85,7 @@ pipeline parse_pipeline(Parser p)
     /* Tolerancia a espacios posteriores */
     parser_skip_blanks(p);
     /* Consumir todo lo que hay inclusive el \n */
-    parser_garbage(p, &garbage);//falta assert?
+    parser_garbage(p, &garbage); // falta assert?
     /* Si hubo error, hacemos cleanup */
 
     if (error)

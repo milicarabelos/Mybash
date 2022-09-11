@@ -55,6 +55,44 @@ static void redir_out(char *out)
     }
 }
 
+static void execute_scommand(scommand simple_command, pipeline apipe)
+{
+    unsigned int length = 0;
+    pid_t pid = fork();
+    if (pid < 0) // error
+    {
+        printf("Fork failure, where PID: %d \n", pid);
+        exit(EXIT_FAILURE);
+    }
+    if (pid == 0) // hijo
+    {
+        char *in = scommand_get_redir_in(simple_command);
+        char *out = scommand_get_redir_out(simple_command);
+        length = scommand_length(simple_command);
+        char **args = calloc(length, sizeof(char *));
+        scommand_to_array(simple_command, args);
+
+        if (in != NULL)
+        {
+            redir_in(in);
+        }
+        if (out != NULL)
+        {
+            redir_out(out);
+        }
+        execvp(args[0], args);
+        printf("error on execvp %d", getpid());
+        exit(EXIT_FAILURE);
+    }
+    else // padre
+    {
+        if (pipeline_get_wait(apipe))
+        {
+            wait(NULL);
+        }
+    }
+}
+
 void execute_pipeline(pipeline apipe)
 {
     assert(apipe != NULL);
@@ -80,40 +118,9 @@ void execute_pipeline(pipeline apipe)
 
         if (pipeline_length(apipe) == 1)
         {
-            pid = fork();
-            if (pid < 0) // error
-            {
-                printf("Fork failure, where PID: %d \n", pid);
-                exit(EXIT_FAILURE);
-            }
-            if (pid == 0) // hijo
-            {
-                simple_command = pipeline_front(apipe);
-                char *in = scommand_get_redir_in(simple_command);
-                char *out = scommand_get_redir_out(simple_command);
-                length = scommand_length(simple_command);
-                char **args = calloc(length, sizeof(char *));
-                scommand_to_array(simple_command, args);
+            simple_command = pipeline_front(apipe);
+            execute_scommand(simple_command, apipe);
 
-                if (in != NULL)
-                {
-                    redir_in(in);
-                }
-                if (out != NULL)
-                {
-                    redir_out(out);
-                }
-                execvp(args[0], args);
-                printf("error on execvp %d", getpid());
-                exit(EXIT_FAILURE);
-            }
-            else // padre
-            {
-                if (pipeline_get_wait(apipe))
-                {
-                    wait(NULL);
-                }
-            }
         }
         else
 
