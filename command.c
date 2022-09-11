@@ -106,7 +106,7 @@ char *scommand_get_argument(const scommand self, int i)
 {
     // Juan
     assert(self != NULL && !scommand_is_empty(self));
-    assert(i>0);
+    assert(i>=0);
     char *ret = g_list_nth_data(self->command, i);
     return ret;
 }

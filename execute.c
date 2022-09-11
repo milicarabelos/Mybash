@@ -39,7 +39,6 @@ void execute_pipeline(pipeline apipe)
             if (pid < 0) // error
             {
                 printf("Fork failure, where PID: %d \n", pid);
-                exit(1);
             }
             if (pid == 0) // hijo
             {
@@ -52,8 +51,9 @@ void execute_pipeline(pipeline apipe)
 
                 if (in != NULL)
                 {
-                    path = strmerge("./", in);
-                    file = open(path,1, O_RDONLY);
+                    path = in;
+                    file = open(path, O_RDONLY, O_CREAT);
+
                     if (file < 0)
                     {
                         printf("Error, file doesn't exist.");
@@ -62,16 +62,18 @@ void execute_pipeline(pipeline apipe)
                     {
                         dup2(file, 0);
                         file = close(file);
+                         assert(file != -1);
                         if (file < 0)
                         {
                             printf("Error while closing the file.");
                         }
                     }
                 }
-                else if (out != NULL)
+                if (out != NULL)
                 {
-                    path = strmerge("./", out);
-                    file = open(path,1, O_CREAT);
+                    path = out;
+                    file = open(path, O_WRONLY, O_CREAT);
+                    assert(file != -1);
                     dup2(file, 1);
                     file = close(file);
                     if (file < 0)
@@ -112,7 +114,8 @@ void execute_pipeline(pipeline apipe)
 
                 // ver
                 dup2(tube[1], 1);
-                close(tube[1]);
+                file = close(tube[1]);
+                // chekear que se cierre bien att juan
                 execvp(args[0], args);
             }
 
@@ -135,6 +138,8 @@ void execute_pipeline(pipeline apipe)
 
                     dup2(tube[0], 0);
                     close(tube[0]);
+
+                // chekear que se cierre bien att juan
                     execvp(args2[0], args2);
                 }
                 else // padre finalmente
