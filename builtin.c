@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "command.h"
 #include "builtin.h"
+#include "tests/syscall_mock.h"
 #include <stdio.h>
 #include <unistd.h>
 
