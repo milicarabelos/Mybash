@@ -15,27 +15,72 @@
 #include "parsing.h"
 #include "builtin.h"
 
+static void execute_internal(pipeline apipe)
+{
+    scommand simple_command = pipeline_front(apipe);
+    pipeline_pop_front(apipe);
+    builtin_run(simple_command);
+}
+
+static void redir_in(char *in)
+{
+    char *path = in;
+    int file = open(path, O_RDONLY, O_CREAT);
+
+    if (file < 0)
+    {
+        printf("Error, file doesn't exist.");
+    }
+    else
+    {
+        dup2(file, 0);
+        file = close(file);
+        assert(file != -1);
+        if (file < 0)
+        {
+            printf("Error while closing the file.");
+        }
+    }
+}
+static void redir_out(char *out)
+{
+    char *path = out;
+    int file = open(path, O_WRONLY, O_CREAT);
+    assert(file != -1);
+    dup2(file, 1);
+    file = close(file);
+    if (file < 0)
+    {
+        printf("Error while closing the file.");
+    }
+}
+
 void execute_pipeline(pipeline apipe)
 {
     assert(apipe != NULL);
 
     scommand simple_command;
     unsigned int length, length2;
-    int file;
-    char *path;
+    // int file;
+    // char *path;
     pid_t pid;
     int tube[2];
+
     if (builtin_is_internal(pipeline_front(apipe)))
     {
-        simple_command = pipeline_front(apipe);
-        builtin_run(simple_command);
+        execute_internal(apipe);
     }
     else
     {
+        if (scommand_front(pipeline_front(apipe)) == NULL)
+        {
+            exit(1);
+        }
+        // si el scommand es null salgo sin ejecutar nada
+
         if (pipeline_length(apipe) == 1)
         {
             pid = fork();
-
             if (pid < 0) // error
             {
                 printf("Fork failure, where PID: %d \n", pid);
@@ -51,37 +96,15 @@ void execute_pipeline(pipeline apipe)
 
                 if (in != NULL)
                 {
-                    path = in;
-                    file = open(path, O_RDONLY, O_CREAT);
-
-                    if (file < 0)
-                    {
-                        printf("Error, file doesn't exist.");
-                    }
-                    else
-                    {
-                        dup2(file, 0);
-                        file = close(file);
-                         assert(file != -1);
-                        if (file < 0)
-                        {
-                            printf("Error while closing the file.");
-                        }
-                    }
+                    redir_in(in);
                 }
                 if (out != NULL)
                 {
-                    path = out;
-                    file = open(path, O_WRONLY, O_CREAT);
-                    assert(file != -1);
-                    dup2(file, 1);
-                    file = close(file);
-                    if (file < 0)
-                    {
-                        printf("Error while closing the file.");
-                    }
+                    redir_out(out);
                 }
                 execvp(args[0], args);
+                printf("error on execvp %d", getpid());
+                EXIT_FAILURE;
             }
             else // padre
             {
@@ -114,9 +137,15 @@ void execute_pipeline(pipeline apipe)
 
                 // ver
                 dup2(tube[1], 1);
-                file = close(tube[1]);
-                // chekear que se cierre bien att juan
+                int file = close(tube[0]);
+                if (file < 0)
+                {
+                    printf("close file error");
+                    exit(0);
+                }
                 execvp(args[0], args);
+                printf("error on execvp %d", getpid());
+                EXIT_FAILURE;
             }
 
             else // padre primerizo
@@ -137,10 +166,16 @@ void execute_pipeline(pipeline apipe)
                     scommand_to_array(simple_command, args2);
 
                     dup2(tube[0], 0);
-                    close(tube[0]);
-
-                // chekear que se cierre bien att juan
+                    int file = close(tube[1]);
+                    if (file < 0)
+                    {
+                        printf("close file error");
+                        exit(0);
+                    }
+                    // chekear que se cierre bien att juan
                     execvp(args2[0], args2);
+                    printf("error on execvp %d", getpid());
+                    EXIT_FAILURE;
                 }
                 else // padre finalmente
                 {
