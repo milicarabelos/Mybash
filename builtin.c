@@ -26,6 +26,7 @@ bool builtin_alone(pipeline p)
 
 void builtin_run(scommand cmd)
 {
+    int cd;
     assert(builtin_is_internal(cmd));
     if (strcmp(scommand_front(cmd), "exit") == 0)
     {
@@ -42,12 +43,13 @@ void builtin_run(scommand cmd)
         char *arg = scommand_get_argument(cmd, 1);
         if (arg == NULL)
         {
-            chdir("~");
+            cd = chdir("~");
         }
         else
         {
-            chdir(arg);
+            cd = chdir(arg);
         }
+        assert(cd==0); // esta fallando este assert
     }
     if (strcmp(scommand_front(cmd), "help") == 0)
         {
