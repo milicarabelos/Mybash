@@ -84,6 +84,7 @@ void execute_pipeline(pipeline apipe)
             if (pid < 0) // error
             {
                 printf("Fork failure, where PID: %d \n", pid);
+                exit(EXIT_FAILURE);
             }
             if (pid == 0) // hijo
             {
@@ -104,7 +105,7 @@ void execute_pipeline(pipeline apipe)
                 }
                 execvp(args[0], args);
                 printf("error on execvp %d", getpid());
-                EXIT_FAILURE;
+                exit(EXIT_FAILURE);
             }
             else // padre
             {
@@ -145,7 +146,7 @@ void execute_pipeline(pipeline apipe)
                 }
                 execvp(args[0], args);
                 printf("error on execvp %d", getpid());
-                EXIT_FAILURE;
+                exit(EXIT_FAILURE);
             }
 
             else // padre primerizo
@@ -175,7 +176,7 @@ void execute_pipeline(pipeline apipe)
                     // chekear que se cierre bien att juan
                     execvp(args2[0], args2);
                     printf("error on execvp %d", getpid());
-                    EXIT_FAILURE;
+                    exit(EXIT_FAILURE);
                 }
                 else // padre finalmente
                 {
