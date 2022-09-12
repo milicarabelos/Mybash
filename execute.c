@@ -122,7 +122,6 @@ static void execute_multiple_commands(pipeline apipe)
         close(tube[READING_TIP]);
         // creando los argumentos para execvp()
         scommand simple_command = pipeline_front(apipe);
-        pipeline_pop_front(apipe);
         length = scommand_length(simple_command);
         char **args = calloc(length, sizeof(char *));
         scommand_to_array(simple_command, args);
@@ -151,9 +150,9 @@ static void execute_multiple_commands(pipeline apipe)
             exit(1);
         }
         else if (pid == 0) // segundo hijo
-        {
-            scommand simple_command = pipeline_front(apipe);
+        {   
             pipeline_pop_front(apipe);
+            scommand simple_command = pipeline_front(apipe);
             length = scommand_length(simple_command);
             char **args2 = calloc(length, sizeof(char *));
             scommand_to_array(simple_command, args2);
