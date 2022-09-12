@@ -33,9 +33,9 @@ static void redir_in(char *in)
     }
     else
     {
-        dup2(file, 0);
+        int ret_dup = dup2(file, 0);
+        assert(ret_dup != -1);
         file = close(file);
-        assert(file != -1);
         if (file < 0)
         {
             printf("Error while closing the file.");
@@ -47,7 +47,8 @@ static void redir_out(char *out)
     char *path = out;
     int file = open(path, O_WRONLY, O_CREAT);
     assert(file != -1);
-    dup2(file, 1);
+    int ret_dup = dup2(file, 1);
+    assert(ret_dup != -1);
     file = close(file);
     if (file < 0)
     {
@@ -104,9 +105,9 @@ static void execute_multiple_commands(pipeline apipe)
     int tube[2];
     unsigned int length;
 
+    int ret_pipe = pipe(tube);
+    assert(ret_pipe != -1);
     pid = fork();
-    pipe(tube);
-
     if (pid < 0) // error
     {
         printf("fork first child faliure %d \n", pid);
@@ -122,7 +123,8 @@ static void execute_multiple_commands(pipeline apipe)
         scommand_to_array(simple_command, args);
 
         // ver
-        dup2(tube[1], 1);
+        int ret_dup = dup2(tube[1], 1);
+        assert(ret_dup = !-1);
         int file = close(tube[0]);
         if (file < 0)
         {
@@ -150,8 +152,9 @@ static void execute_multiple_commands(pipeline apipe)
             length = scommand_length(simple_command);
             char **args2 = calloc(length, sizeof(char *));
             scommand_to_array(simple_command, args2);
-
-            dup2(tube[0], 0);
+            
+            int ret_dup = dup2(tube[0], 0);
+            assert(ret_dup = !-1);
             int file = close(tube[1]);
             if (file < 0)
             {
@@ -180,11 +183,11 @@ void execute_pipeline(pipeline apipe)
 {
     assert(apipe != NULL);
 
-    //scommand simple_command;
-    //unsigned int length, length2;
-    // int file;
-    // char *path;
-    //pid_t pid;
+    // scommand simple_command;
+    // unsigned int length, length2;
+    //  int file;
+    //  char *path;
+    // pid_t pid;
 
     if (builtin_is_internal(pipeline_front(apipe)))
     {
