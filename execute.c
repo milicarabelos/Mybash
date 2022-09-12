@@ -55,8 +55,10 @@ static void redir_out(char *out)
     }
 }
 
-static void execute_scommand(scommand simple_command, pipeline apipe)
+static void execute_scommand(pipeline apipe)
 {
+    assert(apipe != NULL);
+    scommand simple_command = scommand_new();
     unsigned int length = 0;
     pid_t pid = fork();
     if (pid < 0) // error
@@ -66,6 +68,8 @@ static void execute_scommand(scommand simple_command, pipeline apipe)
     }
     if (pid == 0) // hijo
     {
+        simple_command = pipeline_front(apipe);
+        pipeline_pop_front(apipe);
         char *in = scommand_get_redir_in(simple_command);
         char *out = scommand_get_redir_out(simple_command);
         length = scommand_length(simple_command);
@@ -93,16 +97,94 @@ static void execute_scommand(scommand simple_command, pipeline apipe)
     }
 }
 
+static void execute_multiple_commands(pipeline apipe)
+{
+    // usar funcion pipe
+    pid_t pid;
+    int tube[2];
+    unsigned int length;
+
+    pid = fork();
+    pipe(tube);
+
+    if (pid < 0) // error
+    {
+        printf("fork first child faliure %d \n", pid);
+        exit(1);
+    }
+    else if (pid == 0) // primer hijo hijo
+    {
+        // creando los argumentos para execvp()
+        scommand simple_command = pipeline_front(apipe);
+        pipeline_pop_front(apipe);
+        length = scommand_length(simple_command);
+        char **args = calloc(length, sizeof(char *));
+        scommand_to_array(simple_command, args);
+
+        // ver
+        dup2(tube[1], 1);
+        int file = close(tube[0]);
+        if (file < 0)
+        {
+            printf("close file error");
+            exit(0);
+        }
+        execvp(args[0], args);
+        printf("error on execvp %d", getpid());
+        exit(EXIT_FAILURE);
+    }
+
+    else // padre primerizo
+    {
+        pid = fork();
+
+        if (pid < 0) // error
+        {
+            printf("fork second child faliure %d \n", pid);
+            exit(1);
+        }
+        else if (pid == 0) // segundo hijo
+        {
+            scommand simple_command = pipeline_front(apipe);
+            pipeline_pop_front(apipe);
+            length = scommand_length(simple_command);
+            char **args2 = calloc(length, sizeof(char *));
+            scommand_to_array(simple_command, args2);
+
+            dup2(tube[0], 0);
+            int file = close(tube[1]);
+            if (file < 0)
+            {
+                printf("close file error");
+                exit(0);
+            }
+            // chekear que se cierre bien att juan
+            execvp(args2[0], args2);
+            printf("error on execvp %d", getpid());
+            exit(EXIT_FAILURE);
+        }
+        else // padre finalmente
+        {
+            if (pipeline_get_wait(apipe)) // si tenemos "&"
+            {
+                wait(NULL); // un hijo
+                wait(NULL); // dos hijos
+            }
+        }
+        close(tube[0]);
+        close(tube[1]);
+    }
+}
+
 void execute_pipeline(pipeline apipe)
 {
     assert(apipe != NULL);
 
-    scommand simple_command;
-    unsigned int length, length2;
+    //scommand simple_command;
+    //unsigned int length, length2;
     // int file;
     // char *path;
-    pid_t pid;
-    int tube[2];
+    //pid_t pid;
 
     if (builtin_is_internal(pipeline_front(apipe)))
     {
@@ -118,84 +200,11 @@ void execute_pipeline(pipeline apipe)
 
         if (pipeline_length(apipe) == 1)
         {
-            simple_command = pipeline_front(apipe);
-            execute_scommand(simple_command, apipe);
-
+            execute_scommand(apipe);
         }
         else
-
         { // dos pipeline
-
-            // usar funcion pipe
-            pid = fork();
-            pipe(tube);
-
-            if (pid < 0) // error
-            {
-                printf("fork first child faliure %d \n", pid);
-                exit(1);
-            }
-            else if (pid == 0) // primer hijo hijo
-            {
-                // creando los argumentos para execvp()
-                scommand simple_command = pipeline_front(apipe);
-                length = scommand_length(simple_command);
-                char **args = calloc(length, sizeof(char *));
-                scommand_to_array(simple_command, args);
-
-                // ver
-                dup2(tube[1], 1);
-                int file = close(tube[0]);
-                if (file < 0)
-                {
-                    printf("close file error");
-                    exit(0);
-                }
-                execvp(args[0], args);
-                printf("error on execvp %d", getpid());
-                exit(EXIT_FAILURE);
-            }
-
-            else // padre primerizo
-            {
-                pid = fork();
-
-                if (pid < 0) // error
-                {
-                    printf("fork second child faliure %d \n", pid);
-                    exit(1);
-                }
-                else if (pid == 0) // segundo hijo
-                {
-                    pipeline_pop_front(apipe);
-                    scommand simple_command = pipeline_front(apipe);
-                    length2 = scommand_length(simple_command);
-                    char **args2 = calloc(length2, sizeof(char *));
-                    scommand_to_array(simple_command, args2);
-
-                    dup2(tube[0], 0);
-                    int file = close(tube[1]);
-                    if (file < 0)
-                    {
-                        printf("close file error");
-                        exit(0);
-                    }
-                    // chekear que se cierre bien att juan
-                    execvp(args2[0], args2);
-                    printf("error on execvp %d", getpid());
-                    exit(EXIT_FAILURE);
-                }
-                else // padre finalmente
-                {
-                    if (pipeline_get_wait(apipe)) // si tenemos "&"
-                    {
-                        wait(NULL); // un hijo
-                        wait(NULL); // dos hijos
-                    }
-                }
-                close(tube[0]);
-                close(tube[1]);
-            }
+            execute_multiple_commands(apipe);
         }
     }
 }
