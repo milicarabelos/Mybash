@@ -78,7 +78,7 @@ static void execute_scommand(pipeline apipe)
         char *in = scommand_get_redir_in(simple_command);
         char *out = scommand_get_redir_out(simple_command);
         length = scommand_length(simple_command);
-        char **args = calloc(length, sizeof(char *));
+        char **args = calloc(length + 1, sizeof(char *));
         scommand_to_array(simple_command, args);
 
         if (in != NULL)
@@ -123,7 +123,7 @@ static void execute_multiple_commands(pipeline apipe)
         // creando los argumentos para execvp()
         scommand simple_command = pipeline_front(apipe);
         length = scommand_length(simple_command);
-        char **args = calloc(length, sizeof(char *));
+        char **args = calloc(length + 1, sizeof(char *));
         scommand_to_array(simple_command, args);
 
         // ver
@@ -150,11 +150,11 @@ static void execute_multiple_commands(pipeline apipe)
             exit(1);
         }
         else if (pid == 0) // segundo hijo
-        {   
+        {
             pipeline_pop_front(apipe);
             scommand simple_command = pipeline_front(apipe);
             length = scommand_length(simple_command);
-            char **args2 = calloc(length, sizeof(char *));
+            char **args2 = calloc(length +1, sizeof(char *));
             scommand_to_array(simple_command, args2);
 
             int ret_dup = dup2(tube[READING_TIP], STDIN_FILENO);
