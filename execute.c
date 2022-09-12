@@ -15,6 +15,10 @@
 #include "parsing.h"
 #include "builtin.h"
 
+/* MACROS */
+#define reading_tip 0
+#define writing_tip 1
+
 static void execute_internal(pipeline apipe)
 {
     scommand simple_command = pipeline_front(apipe);
@@ -123,9 +127,9 @@ static void execute_multiple_commands(pipeline apipe)
         scommand_to_array(simple_command, args);
 
         // ver
-        int ret_dup = dup2(tube[1], 1);
+        int ret_dup = dup2(tube[writing_tip], writing_tip);
         assert(ret_dup != -1);
-        int file = close(tube[0]);
+        int file = close(tube[reading_tip]);
         if (file < 0)
         {
             printf("close file error");
@@ -152,14 +156,13 @@ static void execute_multiple_commands(pipeline apipe)
             length = scommand_length(simple_command);
             char **args2 = calloc(length, sizeof(char *));
             scommand_to_array(simple_command, args2);
-
-            int ret_dup = dup2(tube[0], 0);
+            int ret_dup = dup2(tube[reading_tip], reading_tip);
             assert(ret_dup != -1);
-            int file = close(tube[1]);
+            int file = close(tube[writing_tip]);
             if (file < 0)
             {
                 printf("close file error");
-                exit(0);
+                return;
             }
             // chekear que se cierre bien att juan
             execvp(args2[0], args2);
@@ -173,9 +176,9 @@ static void execute_multiple_commands(pipeline apipe)
                 wait(NULL); // un hijo
                 wait(NULL); // dos hijos
             }
+            close(tube[writing_tip]);
+            close(tube[reading_tip]);
         }
-        close(tube[0]);
-        close(tube[1]);
     }
 }
 
