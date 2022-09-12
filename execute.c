@@ -1,219 +1,295 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-#include <sys/types.h> //wait
-#include <sys/wait.h>  //wait
-#include <fcntl.h>
-#include <assert.h>
-
-#include "tests/syscall_mock.h"
-#include "strextra.h"
+#include <stdbool.h>
+#include <glib.h>
 #include "command.h"
-#include "execute.h"
-#include "parser.h"
-#include "parsing.h"
-#include "builtin.h"
+#include <assert.h>
+#include "strextra.h"
+#include <string.h>
 
-/* MACROS */
-#define READING_TIP 0
-#define WRITING_TIP 1
+// pruebacommit
+// scommand: Juan y Nacho
 
-static void execute_internal(pipeline apipe)
+struct scommand_s
 {
-    scommand simple_command = pipeline_front(apipe);
-    pipeline_pop_front(apipe);
-    builtin_run(simple_command);
+    // Juan
+    GList *command;
+    char *args_in;
+    char *args_out;
+};
+
+scommand scommand_new(void)
+{
+    // Juan
+    scommand init;
+    init = calloc(1, sizeof(struct scommand_s));
+    init->args_in = NULL;
+    init->args_out = NULL;
+    init->command = NULL;
+    assert(init != NULL && scommand_is_empty(init) &&
+            scommand_get_redir_in(init) == NULL    &&
+            scommand_get_redir_out(init) == NULL);
+    return init;
 }
 
-static void redir_in(char *in)
+scommand scommand_destroy(scommand self)
 {
-    char *path = in;
-    int file = open(path, O_RDONLY, O_CREAT);
+    // Juan
+    assert(self != NULL);
+    if (self->command != NULL)
+    {
+        g_list_free_full(self->command, free); /* liberar la memoria de la lista */
+        self->command = NULL;
+    }
+    
+    free(self->args_in);
+    self->args_in = NULL;
+    free(self->args_out);
+    self->args_out = NULL;
 
-    if (file < 0)
-    {
-        printf("Error, file doesn't exist.\n");
-    }
-    else
-    {
-        int ret_dup = dup2(file, READING_TIP);
-        assert(ret_dup != -1);
-        file = close(file);
-        if (file < 0)
-        {
-            printf("Error while closing the file.\n");
-        }
-    }
-}
-static void redir_out(char *out)
-{
-    char *path = out;
-    int file = open(path, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
-    assert(file != -1);
-    int ret_dup = dup2(file, WRITING_TIP);
-    assert(ret_dup != -1);
-    file = close(file);
-    if (file < 0)
-    {
-        printf("Error while closing the file.\n");
-    }
+    free(self);
+    self = NULL;
+
+    assert(self == NULL);
+    return self;
 }
 
-static void execute_scommand(pipeline apipe)
+void scommand_push_back(scommand self, char *argument)
 {
-    assert(apipe != NULL);
-    scommand simple_command = scommand_new();
-    unsigned int length = 0;
-    pid_t pid = fork();
-    if (pid < 0) // error
-    {
-        printf("Fork failure, where PID: %d \n", pid);
-        exit(EXIT_FAILURE);
-    }
-    if (pid == 0) // hijo
-    {
-        simple_command = pipeline_front(apipe);
-        pipeline_pop_front(apipe);
-        char *in = scommand_get_redir_in(simple_command);
-        char *out = scommand_get_redir_out(simple_command);
-        length = scommand_length(simple_command);
-        char **args = calloc(length + 1, sizeof(char *));
-        scommand_to_array(simple_command, args);
-
-        if (in != NULL)
-        {
-            redir_in(in);
-        }
-        if (out != NULL)
-        {
-            redir_out(out);
-        }
-        execvp(args[0], args);
-        printf("error (%d) the program cannot be executed or does not exist \n", getpid());
-        exit(EXIT_FAILURE);
-    }
-    else // padre
-    {
-        if (pipeline_get_wait(apipe))
-        {
-            wait(NULL);
-        }
-    }
+    // Nacho
+    assert(self != NULL && argument != NULL);
+    // append: Adds a new element on to the end of the list.
+    // agrego al final de la lista de commands el argument (nuevo command)
+    self->command = g_list_append(self->command, argument);
+    assert(!scommand_is_empty(self));
 }
 
-static void execute_multiple_commands(pipeline apipe)
+void scommand_pop_front(scommand self)
 {
-    // usar funcion pipe
-    pid_t pid;
-    int tube[2];
-    unsigned int length;
-
-    int ret_pipe = pipe(tube);
-    assert(ret_pipe != -1);
-    pid = fork();
-    if (pid < 0) // error
-    {
-        printf("fork first child faliure, where PID: %d \n", pid);
-        exit(1);
-    }
-    else if (pid == 0) // primer hijo hijo
-    {
-        close(tube[READING_TIP]);
-        // creando los argumentos para execvp()
-        scommand simple_command = pipeline_front(apipe);
-        length = scommand_length(simple_command);
-        char **args = calloc(length + 1, sizeof(char *));
-        scommand_to_array(simple_command, args);
-
-        // ver
-        int ret_dup = dup2(tube[WRITING_TIP], STDOUT_FILENO);
-        assert(ret_dup != -1);
-        int file = close(tube[WRITING_TIP]);
-        if (file < 0)
-        {
-            printf("Error while closing the file.\n");
-            exit(0);
-        }
-        execvp(args[0], args);
-        printf("error (%d) the program cannot be executed or does not exist \n", getpid());
-        exit(EXIT_FAILURE);
-    }
-    else // padre primerizo
-    {
-        close(tube[WRITING_TIP]);
-        pid = fork();
-
-        if (pid < 0) // error
-        {
-            printf("fork second child faliure, where PID: %d \n", pid);
-            exit(1);
-        }
-        else if (pid == 0) // segundo hijo
-        {
-            pipeline_pop_front(apipe);
-            scommand simple_command = pipeline_front(apipe);
-            length = scommand_length(simple_command);
-            char **args2 = calloc(length + 1, sizeof(char *));
-            scommand_to_array(simple_command, args2);
-
-            int ret_dup = dup2(tube[READING_TIP], STDIN_FILENO);
-            assert(ret_dup != -1);
-            int file = close(tube[READING_TIP]);
-            if (file < 0)
-            {
-                printf("Error while closing the file.\n");
-                return;
-            }
-            // chekear que se cierre bien att juan
-            execvp(args2[0], args2);
-            printf("error (%d) the program cannot be executed or does not exist \n", getpid());
-            exit(EXIT_FAILURE);
-        }
-        else // padre finalmente
-        {
-            if (pipeline_get_wait(apipe)) // si tenemos "&"
-            {
-                wait(NULL); // un hijo
-                wait(NULL); // dos hijos
-            }
-            close(tube[READING_TIP]);
-        }
-    }
+    // Nacho
+    assert(self != NULL && !scommand_is_empty(self));
+    self->command = g_list_delete_link(self->command, self->command);
+}
+void scommand_set_redir_in(scommand self, char *filename)
+{
+    // Nacho
+    assert(self != NULL);
+    self->args_in = filename;
 }
 
-void execute_pipeline(pipeline apipe)
+void scommand_set_redir_out(scommand self, char *filename)
 {
-    assert(apipe != NULL);
+    // Nacho
+    assert(self != NULL);
+    self->args_out = filename;
+}
 
-    // scommand simple_command;
-    // unsigned int length, length2;
-    //  int file;
-    //  char *path;
-    // pid_t pid;
+bool scommand_is_empty(const scommand self)
+{
+    // Juan
+    assert(self != NULL);
+    return self->command == NULL;
+}
+unsigned int scommand_length(const scommand self)
+{
+    // JUan
+    assert(self != NULL);
+    unsigned int length = g_list_length(self->command); 
+    assert((length == 0)== scommand_is_empty(self));
+    return length;
+}
 
-    if (apipe != NULL && !pipeline_is_empty(apipe))
+char *scommand_front(const scommand self)
+{
+    // Nacho
+    assert(self != NULL && !scommand_is_empty(self));
+    char *ret;
+    ret = g_list_nth_data(self->command, 0);
+    assert(ret != NULL);
+    return ret;
+}
+
+char *scommand_get_argument(const scommand self, int i)
+{
+    // Juan
+    assert(self != NULL && !scommand_is_empty(self));
+    assert(i>=0);
+    char *ret = g_list_nth_data(self->command, i);
+    return ret;
+}
+
+void scommand_to_array(const scommand self, char ** args){
+
+    assert(self != NULL);
+    unsigned int length = scommand_length(self);
+
+    for (unsigned int i = 0; i < length; i++)
     {
-        if (builtin_is_internal(pipeline_front(apipe)))
-        {
-            execute_internal(apipe);
-        }
-        else
-        {
-            if (scommand_front(pipeline_front(apipe)) == NULL)
-            {
-                exit(1);
-            }
-            // si el scommand es null salgo sin ejecutar nada
+        args[i] = scommand_get_argument(self,i); 
+    }
 
-            if (pipeline_length(apipe) == 1)
-            {
-                execute_scommand(apipe);
-            }
-            else
-            { // dos pipeline
-                execute_multiple_commands(apipe);
-            }
+}
+
+char *scommand_get_redir_in(const scommand self)
+{
+    // Juan
+    assert(self != NULL);
+    return self->args_in;
+}
+
+char *scommand_get_redir_out(const scommand self)
+{
+    // Juan
+    assert(self != NULL);
+    return self->args_out;
+}
+
+char *scommand_to_string(const scommand self)
+{
+    assert(self != NULL);
+    GList *list = self->command;
+    char *args_in = scommand_get_redir_in(self);
+    char *args_out = scommand_get_redir_out(self);
+
+    char *str;
+    if (list != NULL)
+    {
+        str = scommand_front(self);
+        for (unsigned int i = 1; i < scommand_length(self); i++)
+        {
+            str = strmerge(str, g_list_nth_data(list, i));
+            str = strmerge(str, " ");
+        };
+
+        if (args_in != NULL)
+        {
+            str = strmerge(str, " < ");
+            str = strmerge(str, args_in);
+        };
+        if (args_out != NULL)
+        {
+            str = strmerge(str, " > ");
+            str = strmerge(str, args_out);
+        };
+    }
+    else {
+        str = NULL;
+    }
+
+    assert(
+        scommand_is_empty(self) ||
+        scommand_get_redir_in(self) == NULL ||
+        scommand_get_redir_out(self) == NULL ||
+        strlen(str) > 0);
+        
+    return str;
+}
+
+// pipeline: Mili y Tomi
+struct pipeline_s
+{
+    GList *commands_queue;
+    bool wait;
+};
+
+pipeline pipeline_new(void)
+{
+    pipeline init;
+    init = calloc(1, sizeof(struct pipeline_s));
+    init->wait = true;
+    init->commands_queue = NULL;
+    assert(init != NULL && pipeline_is_empty(init) && pipeline_get_wait(init));
+
+    return init;
+}
+
+pipeline pipeline_destroy(pipeline self)
+{
+    assert(self != NULL);
+    if (self->commands_queue != NULL)
+    {
+        g_list_free_full(self->commands_queue, free); /* liberar la memoria de la lista */
+        self->commands_queue = NULL;
+    }
+    free(self);
+    self = NULL;
+
+    assert(self == NULL);
+    return self;
+}
+
+void pipeline_push_back(pipeline self, scommand sc)
+{
+    assert(self != NULL && sc != NULL);
+    self->commands_queue = g_list_append(self->commands_queue, sc);
+    assert(!pipeline_is_empty(self));
+}
+
+void pipeline_pop_front(pipeline self)
+{
+    assert(self != NULL && !pipeline_is_empty(self));
+    self->commands_queue = g_list_delete_link(self->commands_queue, self->commands_queue);
+}
+
+void pipeline_set_wait(pipeline self, const bool w)
+{
+    assert(self != NULL);
+    self->wait = w;
+}
+
+bool pipeline_is_empty(const pipeline self)
+{
+    assert(self != NULL);
+    return self->commands_queue == NULL;
+}
+
+unsigned int pipeline_length(const pipeline self)
+{
+    assert(self != NULL);
+    unsigned int length = g_list_length(self->commands_queue);
+    assert((length==0) == pipeline_is_empty(self));
+    return length;
+}
+
+scommand pipeline_front(const pipeline self)
+{
+    assert(self != NULL && !pipeline_is_empty(self));
+    return g_list_nth_data(self->commands_queue, 0);
+}
+
+bool pipeline_get_wait(const pipeline self)
+{
+    assert(self != NULL);
+    return self->wait;
+}
+
+char *pipeline_to_string(const pipeline self)
+{
+    // Tomi y Mili
+    assert(self != NULL);
+    char *str;
+    GList *list = self->commands_queue;
+    char *scommand_to_str;
+
+    if (list != NULL)
+    {
+        str=strdup("");
+        scommand_to_str = scommand_to_string(g_list_nth_data(list, 0));
+        str = strmerge(str, scommand_to_str);
+        for (unsigned int i = 1; i < pipeline_length(self); i++)
+        {
+            str = strmerge(str, " | ");
+            scommand_to_str = scommand_to_string(g_list_nth_data(list, i));
+            str = strmerge(str, scommand_to_str);
+        };
+
+        if (!self->wait)
+        {
+            str = strmerge(str, " &");
         }
     }
+    else {
+        str=NULL;
+    }
+    
+    assert(pipeline_is_empty(self) || pipeline_get_wait(self) || strlen(str) > 0);
+    return str;
 }
