@@ -33,7 +33,7 @@ static void redir_in(char *in)
 
     if (file < 0)
     {
-        printf("Error, file doesn't exist.");
+        printf("Error, file doesn't exist.\n");
     }
     else
     {
@@ -42,7 +42,7 @@ static void redir_in(char *in)
         file = close(file);
         if (file < 0)
         {
-            printf("Error while closing the file.");
+            printf("Error while closing the file.\n");
         }
     }
 }
@@ -56,7 +56,7 @@ static void redir_out(char *out)
     file = close(file);
     if (file < 0)
     {
-        printf("Error while closing the file.");
+        printf("Error while closing the file.\n");
     }
 }
 
@@ -90,7 +90,7 @@ static void execute_scommand(pipeline apipe)
             redir_out(out);
         }
         execvp(args[0], args);
-        printf("error on execvp %d", getpid());
+        printf("error (%d) the program cannot be executed or does not exist \n", getpid());
         exit(EXIT_FAILURE);
     }
     else // padre
@@ -100,7 +100,6 @@ static void execute_scommand(pipeline apipe)
             wait(NULL);
         }
     }
-    
 }
 
 static void execute_multiple_commands(pipeline apipe)
@@ -115,7 +114,7 @@ static void execute_multiple_commands(pipeline apipe)
     pid = fork();
     if (pid < 0) // error
     {
-        printf("fork first child faliure %d \n", pid);
+        printf("fork first child faliure, where PID: %d \n", pid);
         exit(1);
     }
     else if (pid == 0) // primer hijo hijo
@@ -133,11 +132,11 @@ static void execute_multiple_commands(pipeline apipe)
         int file = close(tube[WRITING_TIP]);
         if (file < 0)
         {
-            printf("close file error");
+            printf("Error while closing the file.\n");
             exit(0);
         }
         execvp(args[0], args);
-        printf("error on execvp %d", getpid());
+        printf("error (%d) the program cannot be executed or does not exist \n", getpid());
         exit(EXIT_FAILURE);
     }
     else // padre primerizo
@@ -147,7 +146,7 @@ static void execute_multiple_commands(pipeline apipe)
 
         if (pid < 0) // error
         {
-            printf("fork second child faliure %d \n", pid);
+            printf("fork second child faliure, where PID: %d \n", pid);
             exit(1);
         }
         else if (pid == 0) // segundo hijo
@@ -155,7 +154,7 @@ static void execute_multiple_commands(pipeline apipe)
             pipeline_pop_front(apipe);
             scommand simple_command = pipeline_front(apipe);
             length = scommand_length(simple_command);
-            char **args2 = calloc(length +1, sizeof(char *));
+            char **args2 = calloc(length + 1, sizeof(char *));
             scommand_to_array(simple_command, args2);
 
             int ret_dup = dup2(tube[READING_TIP], STDIN_FILENO);
@@ -163,12 +162,12 @@ static void execute_multiple_commands(pipeline apipe)
             int file = close(tube[READING_TIP]);
             if (file < 0)
             {
-                printf("close file error");
+                printf("Error while closing the file.\n");
                 return;
             }
             // chekear que se cierre bien att juan
             execvp(args2[0], args2);
-            printf("error on execvp %d", getpid());
+            printf("error (%d) the program cannot be executed or does not exist \n", getpid());
             exit(EXIT_FAILURE);
         }
         else // padre finalmente
