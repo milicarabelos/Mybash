@@ -189,25 +189,28 @@ void execute_pipeline(pipeline apipe)
     //  char *path;
     // pid_t pid;
 
-    if (builtin_is_internal(pipeline_front(apipe)))
+    if (!pipeline_is_empty(apipe))
     {
-        execute_internal(apipe);
-    }
-    else
-    {
-        if (scommand_front(pipeline_front(apipe)) == NULL)
+        if (builtin_is_internal(pipeline_front(apipe)))
         {
-            exit(1);
-        }
-        // si el scommand es null salgo sin ejecutar nada
-
-        if (pipeline_length(apipe) == 1)
-        {
-            execute_scommand(apipe);
+            execute_internal(apipe);
         }
         else
-        { // dos pipeline
-            execute_multiple_commands(apipe);
+        {
+            if (scommand_front(pipeline_front(apipe)) == NULL)
+            {
+                exit(1);
+            }
+            // si el scommand es null salgo sin ejecutar nada
+
+            if (pipeline_length(apipe) == 1)
+            {
+                execute_scommand(apipe);
+            }
+            else
+            { // dos pipeline
+                execute_multiple_commands(apipe);
+            }
         }
     }
 }
