@@ -124,7 +124,7 @@ static void execute_multiple_commands(pipeline apipe)
 
         // ver
         int ret_dup = dup2(tube[1], 1);
-        assert(ret_dup = !-1);
+        assert(ret_dup != -1);
         int file = close(tube[0]);
         if (file < 0)
         {
@@ -152,9 +152,9 @@ static void execute_multiple_commands(pipeline apipe)
             length = scommand_length(simple_command);
             char **args2 = calloc(length, sizeof(char *));
             scommand_to_array(simple_command, args2);
-            
+
             int ret_dup = dup2(tube[0], 0);
-            assert(ret_dup = !-1);
+            assert(ret_dup != -1);
             int file = close(tube[1]);
             if (file < 0)
             {
