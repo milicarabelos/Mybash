@@ -43,11 +43,11 @@ void builtin_run(scommand cmd)
         char *arg = scommand_get_argument(cmd, 1);
         if (arg == NULL)
         {
-            cd = chdir("~");
+            chdir("~");
         }
         else
         {
-            cd = chdir(arg);
+            chdir(arg);
         }
         assert(cd==0); // esta fallando este assert
     }
