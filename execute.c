@@ -49,7 +49,7 @@ static void redir_in(char *in)
 static void redir_out(char *out)
 {
     char *path = out;
-    int file = open(path, O_WRONLY, O_CREAT);
+    int file = open(path, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
     assert(file != -1);
     int ret_dup = dup2(file, WRITING_TIP);
     assert(ret_dup != -1);
@@ -100,6 +100,7 @@ static void execute_scommand(pipeline apipe)
             wait(NULL);
         }
     }
+    
 }
 
 static void execute_multiple_commands(pipeline apipe)
