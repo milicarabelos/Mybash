@@ -16,8 +16,8 @@
 #include "builtin.h"
 
 /* MACROS */
-#define reading_tip 0
-#define writing_tip 1
+#define READING_TIP 0
+#define WRITING_TIP 1
 
 static void execute_internal(pipeline apipe)
 {
@@ -37,7 +37,7 @@ static void redir_in(char *in)
     }
     else
     {
-        int ret_dup = dup2(file, 0);
+        int ret_dup = dup2(file, READING_TIP);
         assert(ret_dup != -1);
         file = close(file);
         if (file < 0)
@@ -51,7 +51,7 @@ static void redir_out(char *out)
     char *path = out;
     int file = open(path, O_WRONLY, O_CREAT);
     assert(file != -1);
-    int ret_dup = dup2(file, 1);
+    int ret_dup = dup2(file, WRITING_TIP);
     assert(ret_dup != -1);
     file = close(file);
     if (file < 0)
@@ -127,9 +127,9 @@ static void execute_multiple_commands(pipeline apipe)
         scommand_to_array(simple_command, args);
 
         // ver
-        int ret_dup = dup2(tube[writing_tip], writing_tip);
+        int ret_dup = dup2(tube[WRITING_TIP], WRITING_TIP);
         assert(ret_dup != -1);
-        int file = close(tube[reading_tip]);
+        int file = close(tube[READING_TIP]);
         if (file < 0)
         {
             printf("close file error");
@@ -156,9 +156,9 @@ static void execute_multiple_commands(pipeline apipe)
             length = scommand_length(simple_command);
             char **args2 = calloc(length, sizeof(char *));
             scommand_to_array(simple_command, args2);
-            int ret_dup = dup2(tube[reading_tip], reading_tip);
+            int ret_dup = dup2(tube[READING_TIP], READING_TIP);
             assert(ret_dup != -1);
-            int file = close(tube[writing_tip]);
+            int file = close(tube[WRITING_TIP]);
             if (file < 0)
             {
                 printf("close file error");
@@ -176,8 +176,8 @@ static void execute_multiple_commands(pipeline apipe)
                 wait(NULL); // un hijo
                 wait(NULL); // dos hijos
             }
-            close(tube[writing_tip]);
-            close(tube[reading_tip]);
+            close(tube[WRITING_TIP]);
+            close(tube[READING_TIP]);
         }
     }
 }
