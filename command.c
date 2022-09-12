@@ -39,6 +39,11 @@ scommand scommand_destroy(scommand self)
         g_list_free(self->command); /* liberar la memoria de la lista */
         self->command = NULL;
     }
+    
+    free(self->args_in);
+    self->args_in = NULL;
+    free(self->args_out);
+    self->args_out = NULL;
 
     free(self);
     self = NULL;
@@ -171,6 +176,7 @@ char *scommand_to_string(const scommand self)
         scommand_get_redir_in(self) == NULL ||
         scommand_get_redir_out(self) == NULL ||
         strlen(str) > 0);
+        
     return str;
 }
 
