@@ -36,7 +36,7 @@ scommand scommand_destroy(scommand self)
     assert(self != NULL);
     if (self->command != NULL)
     {
-        g_list_free_full(self->command,NULL); /* liberar la memoria de la lista */
+        g_list_free(self->command); /* liberar la memoria de la lista */
         self->command = NULL;
     }
     
@@ -203,7 +203,7 @@ pipeline pipeline_destroy(pipeline self)
     assert(self != NULL);
     if (self->commands_queue != NULL)
     {
-        g_list_free_full(self->commands_queue,NULL); /* liberar la memoria de la lista */
+        g_list_free(self->commands_queue); /* liberar la memoria de la lista */
         self->commands_queue = NULL;
     }
     free(self);
