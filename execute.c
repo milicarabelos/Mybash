@@ -193,7 +193,7 @@ void execute_pipeline(pipeline apipe)
     //  char *path;
     // pid_t pid;
 
-    if (!pipeline_is_empty(apipe))
+    if (apipe != NULL && !pipeline_is_empty(apipe))
     {
         if (builtin_is_internal(pipeline_front(apipe)))
         {

@@ -13,7 +13,7 @@ static void show_prompt(void)
     printf("mybash> ");
     fflush(stdout);
 }
-/* 
+/*
 int check_for_EOF()
 {
     if (feof(stdin))
@@ -33,16 +33,19 @@ int main(int argc, char *argv[])
     input = parser_new(stdin);
     while (!quit)
     {
-        show_prompt();
-        pipe = parse_pipeline(input);
-        execute_pipeline(pipe);
+        quit = parser_at_eof(input);
+        if (!quit)
+        {
+            show_prompt();
+            pipe = parse_pipeline(input);
+            if(pipe != NULL){execute_pipeline(pipe);}
+        }
+        else
+        {
+            printf("\n");
+        }
         /* Hay que salir luego de ejecutar? */
         // spoiler no, hay que salir cuando hagamos el ctrl+d
-        quit = parser_at_eof(input);
-        /*
-         * COMPLETAR
-         *
-         */
     }
     parser_destroy(input);
     input = NULL;
