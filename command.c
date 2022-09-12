@@ -149,7 +149,7 @@ char *scommand_to_string(const scommand self)
     char *args_in = scommand_get_redir_in(self);
     char *args_out = scommand_get_redir_out(self);
 
-    char *str;
+    char *str=strdup("");
     if (list != NULL)
     {
         str = scommand_front(self);
@@ -170,9 +170,7 @@ char *scommand_to_string(const scommand self)
             str = strmerge(str, args_out);
         };
     }
-    else {
-        str = NULL;
-    }
+
 
     assert(
         scommand_is_empty(self) ||
@@ -265,13 +263,13 @@ char *pipeline_to_string(const pipeline self)
 {
     // Tomi y Mili
     assert(self != NULL);
-    char *str;
+    char *str=strdup("");
     GList *list = self->commands_queue;
     char *scommand_to_str;
 
     if (list != NULL)
     {
-        str=strdup("");
+
         scommand_to_str = scommand_to_string(g_list_nth_data(list, 0));
         str = strmerge(str, scommand_to_str);
         for (unsigned int i = 1; i < pipeline_length(self); i++)
@@ -286,9 +284,7 @@ char *pipeline_to_string(const pipeline self)
             str = strmerge(str, " &");
         }
     }
-    else {
-        str=NULL;
-    }
+
     
     assert(pipeline_is_empty(self) || pipeline_get_wait(self) || strlen(str) > 0);
     return str;
