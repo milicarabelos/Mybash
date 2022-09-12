@@ -119,6 +119,7 @@ static void execute_multiple_commands(pipeline apipe)
     }
     else if (pid == 0) // primer hijo hijo
     {
+        close(tube[READING_TIP]);
         // creando los argumentos para execvp()
         scommand simple_command = pipeline_front(apipe);
         pipeline_pop_front(apipe);
@@ -127,9 +128,9 @@ static void execute_multiple_commands(pipeline apipe)
         scommand_to_array(simple_command, args);
 
         // ver
-        int ret_dup = dup2(tube[WRITING_TIP], WRITING_TIP);
+        int ret_dup = dup2(tube[WRITING_TIP], STDOUT_FILENO);
         assert(ret_dup != -1);
-        int file = close(tube[READING_TIP]);
+        int file = close(tube[WRITING_TIP]);
         if (file < 0)
         {
             printf("close file error");
@@ -139,9 +140,9 @@ static void execute_multiple_commands(pipeline apipe)
         printf("error on execvp %d", getpid());
         exit(EXIT_FAILURE);
     }
-
     else // padre primerizo
     {
+        close(tube[WRITING_TIP]);
         pid = fork();
 
         if (pid < 0) // error
@@ -156,9 +157,10 @@ static void execute_multiple_commands(pipeline apipe)
             length = scommand_length(simple_command);
             char **args2 = calloc(length, sizeof(char *));
             scommand_to_array(simple_command, args2);
-            int ret_dup = dup2(tube[READING_TIP], READING_TIP);
+
+            int ret_dup = dup2(tube[READING_TIP], STDIN_FILENO);
             assert(ret_dup != -1);
-            int file = close(tube[WRITING_TIP]);
+            int file = close(tube[READING_TIP]);
             if (file < 0)
             {
                 printf("close file error");
@@ -176,7 +178,6 @@ static void execute_multiple_commands(pipeline apipe)
                 wait(NULL); // un hijo
                 wait(NULL); // dos hijos
             }
-            close(tube[WRITING_TIP]);
             close(tube[READING_TIP]);
         }
     }
