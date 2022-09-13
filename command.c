@@ -152,26 +152,36 @@ char *scommand_to_string(const scommand self)
     char *str;
     if (list != NULL)
     {
+        char*straux;
         str = scommand_front(self);
         for (unsigned int i = 1; i < scommand_length(self); i++)
         {
-            str = strmerge(str, g_list_nth_data(list, i));
-            str = strmerge(str, " ");
+            straux=str;
+            str = strmerge(straux, g_list_nth_data(list, i));
+            straux=str;
+            str = strmerge(straux, " ");
+            free(straux);        
         };
 
         if (args_in != NULL)
         {
-            str = strmerge(str, " < ");
-            str = strmerge(str, args_in);
+            straux=str;
+            str = strmerge(straux, " < ");
+            straux=str;
+            str = strmerge(straux, args_in);
+            free(straux);
         };
         if (args_out != NULL)
         {
-            str = strmerge(str, " > ");
-            str = strmerge(str, args_out);
+            straux=str;
+            str = strmerge(straux, " > ");
+            straux=str;
+            str = strmerge(straux, args_out);
+            free(straux);
         };
     }
     else {
-        str=strdup("");
+        str=strmerge("","");
     }
 
 
@@ -278,21 +288,27 @@ char *pipeline_to_string(const pipeline self)
 
     if (list != NULL)
     {
+        char*straux;
         str = scommand_to_string(g_list_nth_data(list, 0));
         for (unsigned int i = 1; i < pipeline_length(self); i++)
         {   
-            str = strmerge(str, " | ");
-            
-            str = strmerge(str, scommand_to_string(g_list_nth_data(list, i)));
+            straux=str;
+            str = strmerge(straux, " | ");
+            straux=str;
+            str = strmerge(straux, scommand_to_string(g_list_nth_data(list, i)));
+            free(straux);
         };
 
         if (!self->wait)
         {
-            str = strmerge(str, " &");
+            char*straux2=str;
+
+            str = strmerge(straux2, " &");
+            free(straux2);
         }
     }
     else {
-        str=strdup("");
+        str=strmerge("","");
     }
 
     
