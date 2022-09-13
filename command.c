@@ -149,7 +149,7 @@ char *scommand_to_string(const scommand self)
     char *args_in = scommand_get_redir_in(self);
     char *args_out = scommand_get_redir_out(self);
 
-    char *str=strdup("");
+    char *str;
     if (list != NULL)
     {
         str = scommand_front(self);
@@ -170,6 +170,9 @@ char *scommand_to_string(const scommand self)
             str = strmerge(str, args_out);
         };
     }
+    else {
+        str=strdup("");
+    }
 
 
     assert(
@@ -177,8 +180,10 @@ char *scommand_to_string(const scommand self)
         scommand_get_redir_in(self) == NULL ||
         scommand_get_redir_out(self) == NULL ||
         strlen(str) > 0);
+
         
     return str;
+    
 }
 
 // pipeline: Mili y Tomi
@@ -204,7 +209,12 @@ pipeline pipeline_destroy(pipeline self)
     assert(self != NULL);
     if (self->commands_queue != NULL)
     {
-        g_list_free_full(self->commands_queue, free); /* liberar la memoria de la lista */
+        while(self->commands_queue!=NULL) {
+            scommand_destroy(pipeline_front(self));
+            pipeline_pop_front(self);
+        }
+        
+        //g_list_free_full(self->commands_queue, free); /* liberar la memoria de la lista */
         self->commands_queue = NULL;
     }
     free(self);
@@ -263,26 +273,26 @@ char *pipeline_to_string(const pipeline self)
 {
     // Tomi y Mili
     assert(self != NULL);
-    char *str=strdup("");
+    char *str;
     GList *list = self->commands_queue;
-    char *scommand_to_str;
 
     if (list != NULL)
     {
-
-        scommand_to_str = scommand_to_string(g_list_nth_data(list, 0));
-        str = strmerge(str, scommand_to_str);
+        str = scommand_to_string(g_list_nth_data(list, 0));
         for (unsigned int i = 1; i < pipeline_length(self); i++)
-        {
+        {   
             str = strmerge(str, " | ");
-            scommand_to_str = scommand_to_string(g_list_nth_data(list, i));
-            str = strmerge(str, scommand_to_str);
+            
+            str = strmerge(str, scommand_to_string(g_list_nth_data(list, i)));
         };
 
         if (!self->wait)
         {
             str = strmerge(str, " &");
         }
+    }
+    else {
+        str=strdup("");
     }
 
     
