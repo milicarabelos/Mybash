@@ -151,41 +151,38 @@ char *scommand_to_string(const scommand self)
     GList *list = self->command;
     char *args_in = scommand_get_redir_in(self);
     char *args_out = scommand_get_redir_out(self);
+    size_t length = 0;
+    char *str=strdup("");
 
-    char *str;
     if (list != NULL)
-    {
-        char*straux;
-        str = scommand_front(self);
-        for (unsigned int i = 1; i < scommand_length(self); i++)
+    {   
+        char *list_str;
+        for (unsigned int i = 0; i < scommand_length(self); i++)
         {
-            straux=str;
-            str = strmerge(straux, g_list_nth_data(list, i));
-            straux=str;
-            str = strmerge(straux, " ");
-            free(straux);        
+            length = strlen(str);
+            list_str = g_list_nth_data(list, i);
+            length = (length + strlen(list_str));
+            str = realloc(str, (length + (size_t) 2) * sizeof(char));
+            str = strcat(str, list_str);
+            str = strcat(str, " ");
         };
 
         if (args_in != NULL)
         {
-            straux=str;
-            str = strmerge(straux, " < ");
-            straux=str;
-            str = strmerge(straux, args_in);
-            free(straux);
+            length = strlen(str) + strlen(args_in);
+            str = realloc(str, (length + 3) * sizeof(char));
+            str = strcat(str, " < ");
+            str = strcat(str, args_in);
         };
         if (args_out != NULL)
         {
-            straux=str;
-            str = strmerge(straux, " > ");
-            straux=str;
-            str = strmerge(straux, args_out);
-            free(straux);
+            length = strlen(str) + strlen(args_out);
+            str = realloc(str, (length + 3) * sizeof(char));
+            str = strcat(str, " > ");
+            str = strcat(str, args_out);
         };
     }
-    else {
-        str=strmerge("","");
-    }
+
 
 
     assert(
@@ -195,7 +192,6 @@ char *scommand_to_string(const scommand self)
         strlen(str) > 0);
 
     return str;
-    
 }
 
 // pipeline: Mili y Tomi
