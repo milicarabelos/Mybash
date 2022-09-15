@@ -66,12 +66,14 @@ void scommand_pop_front(scommand self)
 {
     // Nacho
     assert(self != NULL && !scommand_is_empty(self));
+    free(g_list_nth_data(self->command, 0));
     self->command = g_list_delete_link(self->command, self->command);
 }
 void scommand_set_redir_in(scommand self, char *filename)
 {
     // Nacho
     assert(self != NULL);
+    free(self->args_in);
     self->args_in = filename;
 }
 
@@ -79,6 +81,7 @@ void scommand_set_redir_out(scommand self, char *filename)
 {
     // Nacho
     assert(self != NULL);
+    free(self->args_out);
     self->args_out = filename;
 }
 
@@ -191,7 +194,6 @@ char *scommand_to_string(const scommand self)
         scommand_get_redir_out(self) == NULL ||
         strlen(str) > 0);
 
-        
     return str;
     
 }
@@ -223,8 +225,7 @@ pipeline pipeline_destroy(pipeline self)
             scommand_destroy(pipeline_front(self));
             pipeline_pop_front(self);
         }
-        
-        //g_list_free_full(self->commands_queue, free); /* liberar la memoria de la lista */
+
         self->commands_queue = NULL;
     }
     free(self);
