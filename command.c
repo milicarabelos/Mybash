@@ -280,32 +280,33 @@ char *pipeline_to_string(const pipeline self)
 {
     // Tomi y Mili
     assert(self != NULL);
-    char *str;
     GList *list = self->commands_queue;
+    size_t length;
+    char *str;
 
     if (list != NULL)
     {
-        char*straux;
+        char *list_str;
         str = scommand_to_string(g_list_nth_data(list, 0));
         for (unsigned int i = 1; i < pipeline_length(self); i++)
         {   
-            straux=str;
-            str = strmerge(straux, " | ");
-            straux=str;
-            str = strmerge(straux, scommand_to_string(g_list_nth_data(list, i)));
-            free(straux);
+            length=strlen(str);
+            list_str=scommand_to_string(g_list_nth_data(list, i));
+            length = (length + strlen(list_str));
+            str = realloc(str, (length + (size_t) 4) * sizeof(char));
+            str = strcat(str, " | ");
+            str = strcat(str, (list_str));
         };
 
         if (!self->wait)
         {
-            char*straux2=str;
-
-            str = strmerge(straux2, " &");
-            free(straux2);
+            length=strlen(str);
+            str = realloc(str, (length + (size_t) 2) * sizeof(char));
+            str = strcat(str, " &");
         }
     }
     else {
-        str=strmerge("","");
+        str=strdup("");
     }
 
     
