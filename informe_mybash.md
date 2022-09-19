@@ -17,46 +17,46 @@ Integrantes :
 
 ÍNDICE
 
-1.  [Como usar mybash](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.22cpaud69tfs)
+1.  [Como usar mybash](# Como usar mybash)
     
-2.  [Implementación](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.x2wtewtjinvi)
-    
-
-2.1 [Bloques](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.wsn647qxi1mi)
-
--   [Command](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.ddf0u07ckork)
+2.  [Implementación](# Implementación)
     
 
--   [Funciones extras](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.xkyajfrdty4n)
-    
--   [Librerías](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.gfluvfy0ke1j)
+2.1 [Bloques](## Bloques)
+
+-   [Command](### Command)
     
 
--   [Parsing](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.9gttwzhhahky)
+-   [Funciones extras](#### Funciones extras)
     
--   [Builtin](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.6sird5mru7nw)
-    
--   [Execut](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.647ebmyzp5mb)e
+-   [Librerías](#### Librerías)
     
 
--   [Modularización](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.12fvmmx3s53r)
+-   [Parsing](### Parsing)
+    
+-   [Builtin](### Builtin)
+    
+-   [Execute](### Execute)
     
 
--   [Mybash](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.l3q9i4odcyva)
+-   [Modularización](#### Modularización)
     
 
-3.  [Resultado de los test](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.7gfe9zv68b0b)s
+-   [Mybash](### Mybash)
     
 
--   [Tests de funcionamiento](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.jygvsccvfpnl)
-    
--   [Memtest](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.g5vkioicb2q)
+3.  [Resultado de los tests](# Resultado de los tests)
     
 
-4.  [Organización del trabajo grupal](https://docs.google.com/document/d/1iD3SqLxiC50R9C-4aMoDTOrshLRhdNyvqxs_fzbx_mQ/edit#heading=h.jojv9p5cu4p7)
+-   [Tests de funcionamiento](## Tests de funcionamiento)
+    
+-   [Memtest](## Memtest)
     
 
--   Calidad del código
+4.  [Organización del trabajo grupal](# Organización del trabajo grupal)
+    
+
+-  [Calidad del código](## Calidad del código)
     
 
   
