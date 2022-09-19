@@ -37,7 +37,6 @@ static scommand parse_scommand(Parser p)
         {
             scommand_set_redir_out(simple_command, command_text);
         }
-        command_text = strdup(""); // sobra?
         command_text = parser_next_argument(p, &argument_type);
     }
 
@@ -85,7 +84,7 @@ pipeline parse_pipeline(Parser p)
     /* Tolerancia a espacios posteriores */
     parser_skip_blanks(p);
     /* Consumir todo lo que hay inclusive el \n */
-    parser_garbage(p, &garbage); // falta assert?
+    parser_garbage(p, &garbage);
     /* Si hubo error, hacemos cleanup */
 
     if (error)
@@ -93,5 +92,6 @@ pipeline parse_pipeline(Parser p)
         pipeline_destroy(result);
         result = NULL;
     }
-    return result; // MODIFICAR
+    
+    return result;
 }
