@@ -22,7 +22,7 @@ Integrantes :
 2.  [Implementación](#Implementación)
     
 
-2.1 [Bloques](##Bloques)
+    [Bloques](##Bloques)
 
 -   [Command](###Command)
     
