@@ -22,7 +22,6 @@
 static void execute_internal(pipeline apipe)
 {
     scommand simple_command = pipeline_front(apipe);
-    //pipeline_pop_front(apipe);
     builtin_run(simple_command);
 }
 
@@ -30,6 +29,7 @@ static void redir_in(char *in)
 {
     char *path = in;
     int file = open(path, O_RDONLY, O_CREAT);
+    assert(file != -1);
 
     if (file < 0)
     {
@@ -47,11 +47,13 @@ static void redir_in(char *in)
         }
     }
 }
+
 static void redir_out(char *out)
 {
     char *path = out;
     int file = open(path, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
     assert(file != -1);
+
     int ret_dup = dup2(file, WRITING_TIP);
     assert(ret_dup != -1);
     file = close(file);
@@ -67,21 +69,21 @@ static void execute_scommand(pipeline apipe)
     scommand simple_command = scommand_new();
     unsigned int length = 0;
     pid_t pid = fork();
-    if (pid < 0) // error
+    if (pid < 0) // fork devuelve un numero negativo en caso de error
     {
         printf("Fork failure, where PID: %d \n", pid);
         exit(EXIT_FAILURE);
     }
-    if (pid == 0) // hijo
+    if (pid == 0) // first child
     {
+        // pasando el comando a un array para ejecutar execvp
         simple_command = pipeline_front(apipe);
-        //pipeline_pop_front(apipe);
         char *in = scommand_get_redir_in(simple_command);
         char *out = scommand_get_redir_out(simple_command);
+
         length = scommand_length(simple_command);
         char **args = calloc(length + 1, sizeof(char *));
         scommand_to_array(simple_command, args);
-        
 
         if (in != NULL)
         {
@@ -91,7 +93,7 @@ static void execute_scommand(pipeline apipe)
         {
             redir_out(out);
         }
-        
+
         execvp(args[0], args);
         printf("error (%d) the program cannot be executed or does not exist \n", getpid());
         exit(EXIT_FAILURE);
@@ -120,17 +122,31 @@ static void execute_multiple_commands(pipeline apipe)
         printf("fork first child faliure, where PID: %d \n", pid);
         exit(1);
     }
-    else if (pid == 0) // primer hijo hijo
+    else if (pid == 0) // first child
     {
-        close(tube[READING_TIP]);
-        // creando los argumentos para execvp()
+        close(tube[READING_TIP]); // cerramos la punta de lectura que no vamos a necesitar
+
+        // pasando el comando a un array para ejecutar execvp
         scommand simple_command = pipeline_front(apipe);
         length = scommand_length(simple_command);
         char **args = calloc(length + 1, sizeof(char *));
         scommand_to_array(simple_command, args);
 
-        // ver
+        char *in = scommand_get_redir_in(simple_command);
+
+        if (in != NULL)
+        {
+            redir_in(in);
+        }
+
+        if (scommand_get_redir_out(simple_command) != NULL)
+        {
+            printf("wrong usage of pipe");
+            exit(EXIT_FAILURE);
+        }
+
         int ret_dup = dup2(tube[WRITING_TIP], STDOUT_FILENO);
+
         assert(ret_dup != -1);
         int file = close(tube[WRITING_TIP]);
         if (file < 0)
@@ -142,9 +158,9 @@ static void execute_multiple_commands(pipeline apipe)
         printf("error (%d) the program cannot be executed or does not exist \n", getpid());
         exit(EXIT_FAILURE);
     }
-    else // padre primerizo
+    else //father of one child
     {
-        close(tube[WRITING_TIP]);
+        close(tube[WRITING_TIP]); // cerramos la punta de escritura que no vamos a necesitar
         pid = fork();
 
         if (pid < 0) // error
@@ -152,13 +168,28 @@ static void execute_multiple_commands(pipeline apipe)
             printf("fork second child faliure, where PID: %d \n", pid);
             exit(1);
         }
-        else if (pid == 0) // segundo hijo
+        else if (pid == 0) // second child 
         {
             pipeline_pop_front(apipe);
             scommand simple_command = pipeline_front(apipe);
+
+            // pasando el comando a un array para ejecutar execvp
             length = scommand_length(simple_command);
             char **args2 = calloc(length + 1, sizeof(char *));
             scommand_to_array(simple_command, args2);
+
+            char *out = scommand_get_redir_out(simple_command);
+
+            if (out != NULL)
+            {
+                redir_out(out);
+            }
+
+            if (scommand_get_redir_in(simple_command) != NULL)
+            {
+                printf("wrong usage of pipe");
+                exit(EXIT_FAILURE);
+            }
 
             int ret_dup = dup2(tube[READING_TIP], STDIN_FILENO);
             assert(ret_dup != -1);
@@ -168,19 +199,19 @@ static void execute_multiple_commands(pipeline apipe)
                 printf("Error while closing the file.\n");
                 return;
             }
-            // chekear que se cierre bien att juan
+
             execvp(args2[0], args2);
             printf("error (%d) the program cannot be executed or does not exist \n", getpid());
             exit(EXIT_FAILURE);
         }
-        else // padre finalmente
+        else //father
         {
             if (pipeline_get_wait(apipe)) // si tenemos "&"
             {
-                wait(NULL); // un hijo
-                wait(NULL); // dos hijos
+                wait(NULL); // child one
+                wait(NULL); // child two
             }
-            close(tube[READING_TIP]);
+            close(tube[READING_TIP]); //cerramos finalemnente la punta de lectura en el padre
         }
     }
 }
@@ -188,13 +219,7 @@ static void execute_multiple_commands(pipeline apipe)
 void execute_pipeline(pipeline apipe)
 {
     assert(apipe != NULL);
-
-    // scommand simple_command;
-    // unsigned int length, length2;
-    //  int file;
-    //  char *path;
-    // pid_t pid;
-
+    
     if (apipe != NULL && !pipeline_is_empty(apipe))
     {
         if (builtin_is_internal(pipeline_front(apipe)))
