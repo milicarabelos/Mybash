@@ -162,11 +162,11 @@ char *scommand_to_string(const scommand self)
             length = strlen(str);
             list_str = g_list_nth_data(list, i);
             length = (length + strlen(list_str));
-            str = realloc(str, (length + (size_t) 2) * sizeof(char));
+            str = realloc(str, (length + (size_t) 1) * sizeof(char));
             str = strcat(str, list_str);
             str = strcat(str, " ");
         };
-
+        
         if (args_in != NULL)
         {
             length = strlen(str) + strlen(args_in);
@@ -218,7 +218,7 @@ pipeline pipeline_destroy(pipeline self)
     if (self->commands_queue != NULL)
     {
         while(self->commands_queue!=NULL) {
-            scommand_destroy(pipeline_front(self));
+            //scommand_destroy(pipeline_front(self));
             pipeline_pop_front(self);
         }
 
@@ -241,6 +241,7 @@ void pipeline_push_back(pipeline self, scommand sc)
 void pipeline_pop_front(pipeline self)
 {
     assert(self != NULL && !pipeline_is_empty(self));
+    scommand_destroy(pipeline_front(self));
     self->commands_queue = g_list_delete_link(self->commands_queue, self->commands_queue);
 }
 
@@ -293,11 +294,11 @@ char *pipeline_to_string(const pipeline self)
             length=strlen(str);
             list_str=scommand_to_string(g_list_nth_data(list, i));
             length = (length + strlen(list_str));
-            str = realloc(str, (length + (size_t) 4) * sizeof(char));
+            str = realloc(str, (length + (size_t) 3) * sizeof(char));
             str = strcat(str, " | ");
             str = strcat(str, (list_str));
         };
-
+    free(list_str);
         if (!self->wait)
         {
             length=strlen(str);
