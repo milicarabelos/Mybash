@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "glib.h": "c",
-        "assert.h": "c",
-        "builtin.h": "c"
-    }
-}
