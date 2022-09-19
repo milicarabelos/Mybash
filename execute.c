@@ -22,7 +22,7 @@
 static void execute_internal(pipeline apipe)
 {
     scommand simple_command = pipeline_front(apipe);
-    pipeline_pop_front(apipe);
+    //pipeline_pop_front(apipe);
     builtin_run(simple_command);
 }
 
@@ -34,6 +34,7 @@ static void redir_in(char *in)
     if (file < 0)
     {
         printf("Error, file doesn't exist.\n");
+        exit(EXIT_FAILURE);
     }
     else
     {
@@ -74,12 +75,13 @@ static void execute_scommand(pipeline apipe)
     if (pid == 0) // hijo
     {
         simple_command = pipeline_front(apipe);
-        pipeline_pop_front(apipe);
+        //pipeline_pop_front(apipe);
         char *in = scommand_get_redir_in(simple_command);
         char *out = scommand_get_redir_out(simple_command);
         length = scommand_length(simple_command);
         char **args = calloc(length + 1, sizeof(char *));
         scommand_to_array(simple_command, args);
+        
 
         if (in != NULL)
         {
@@ -89,6 +91,7 @@ static void execute_scommand(pipeline apipe)
         {
             redir_out(out);
         }
+        
         execvp(args[0], args);
         printf("error (%d) the program cannot be executed or does not exist \n", getpid());
         exit(EXIT_FAILURE);
