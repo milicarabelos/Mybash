@@ -5,12 +5,8 @@
 #include "strextra.h"
 #include <string.h>
 
-// pruebacommit
-// scommand: Juan y Nacho
-
 struct scommand_s
 {
-    // Juan
     GList *command;
     char *args_in;
     char *args_out;
@@ -18,7 +14,6 @@ struct scommand_s
 
 scommand scommand_new(void)
 {
-    // Juan
     scommand init;
     init = calloc(1, sizeof(struct scommand_s));
     init->args_in = NULL;
@@ -32,7 +27,6 @@ scommand scommand_new(void)
 
 scommand scommand_destroy(scommand self)
 {
-    // Juan
     assert(self != NULL);
     if (self->command != NULL)
     {
@@ -54,24 +48,19 @@ scommand scommand_destroy(scommand self)
 
 void scommand_push_back(scommand self, char *argument)
 {
-    // Nacho
     assert(self != NULL && argument != NULL);
-    // append: Adds a new element on to the end of the list.
-    // agrego al final de la lista de commands el argument (nuevo command)
     self->command = g_list_append(self->command, argument);
     assert(!scommand_is_empty(self));
 }
 
 void scommand_pop_front(scommand self)
 {
-    // Nacho
     assert(self != NULL && !scommand_is_empty(self));
     free(g_list_nth_data(self->command, 0));
     self->command = g_list_delete_link(self->command, self->command);
 }
 void scommand_set_redir_in(scommand self, char *filename)
 {
-    // Nacho
     assert(self != NULL);
     free(self->args_in);
     self->args_in = filename;
@@ -79,7 +68,6 @@ void scommand_set_redir_in(scommand self, char *filename)
 
 void scommand_set_redir_out(scommand self, char *filename)
 {
-    // Nacho
     assert(self != NULL);
     free(self->args_out);
     self->args_out = filename;
@@ -87,13 +75,12 @@ void scommand_set_redir_out(scommand self, char *filename)
 
 bool scommand_is_empty(const scommand self)
 {
-    // Juan
     assert(self != NULL);
     return self->command == NULL;
 }
+
 unsigned int scommand_length(const scommand self)
 {
-    // JUan
     assert(self != NULL);
     unsigned int length = g_list_length(self->command); 
     assert((length == 0)== scommand_is_empty(self));
@@ -102,25 +89,23 @@ unsigned int scommand_length(const scommand self)
 
 char *scommand_front(const scommand self)
 {
-    // Nacho
     assert(self != NULL && !scommand_is_empty(self));
-    char *ret;
-    ret = g_list_nth_data(self->command, 0);
-    assert(ret != NULL);
-    return ret;
+    char *front;
+    front = g_list_nth_data(self->command, 0);
+    assert(front != NULL);
+    return front;
 }
 
 char *scommand_get_argument(const scommand self, int i)
 {
-    // Juan
     assert(self != NULL && !scommand_is_empty(self));
     assert(i>=0);
-    char *ret = g_list_nth_data(self->command, i);
-    return ret;
+    char *argument = g_list_nth_data(self->command, i);
+    return argument;
 }
 
-void scommand_to_array(const scommand self, char ** args){
-
+void scommand_to_array(const scommand self, char ** args)
+{
     assert(self != NULL);
     unsigned int length = scommand_length(self);
 
@@ -133,14 +118,12 @@ void scommand_to_array(const scommand self, char ** args){
 
 char *scommand_get_redir_in(const scommand self)
 {
-    // Juan
     assert(self != NULL);
     return self->args_in;
 }
 
 char *scommand_get_redir_out(const scommand self)
 {
-    // Juan
     assert(self != NULL);
     return self->args_out;
 }
@@ -174,6 +157,7 @@ char *scommand_to_string(const scommand self)
             str = strcat(str, " < ");
             str = strcat(str, args_in);
         };
+
         if (args_out != NULL)
         {
             length = strlen(str) + strlen(args_out);
@@ -182,8 +166,6 @@ char *scommand_to_string(const scommand self)
             str = strcat(str, args_out);
         };
     }
-
-
 
     assert(
         scommand_is_empty(self) ||
@@ -194,7 +176,7 @@ char *scommand_to_string(const scommand self)
     return str;
 }
 
-// pipeline: Mili y Tomi
+
 struct pipeline_s
 {
     GList *commands_queue;
@@ -217,8 +199,8 @@ pipeline pipeline_destroy(pipeline self)
     assert(self != NULL);
     if (self->commands_queue != NULL)
     {
-        while(self->commands_queue!=NULL) {
-            //scommand_destroy(pipeline_front(self));
+        while(self->commands_queue!=NULL) 
+        {
             pipeline_pop_front(self);
         }
 
@@ -279,7 +261,6 @@ bool pipeline_get_wait(const pipeline self)
 
 char *pipeline_to_string(const pipeline self)
 {
-    // Tomi y Mili
     assert(self != NULL);
     GList *list = self->commands_queue;
     size_t length;
@@ -298,7 +279,9 @@ char *pipeline_to_string(const pipeline self)
             str = strcat(str, " | ");
             str = strcat(str, (list_str));
         };
-    free(list_str);
+
+        free(list_str);
+        
         if (!self->wait)
         {
             length=strlen(str);
@@ -306,7 +289,8 @@ char *pipeline_to_string(const pipeline self)
             str = strcat(str, " &");
         }
     }
-    else {
+    else 
+    {
         str=strdup("");
     }
 

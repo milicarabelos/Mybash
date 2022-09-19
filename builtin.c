@@ -2,15 +2,16 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-#include "command.h"
-#include "builtin.h"
-#include "tests/syscall_mock.h"
 #include <stdio.h>
 #include <unistd.h>
 
+#include "command.h"
+#include "builtin.h"
+#include "tests/syscall_mock.h"
+
+
 bool builtin_is_internal(scommand cmd)
 {
-    // Nacho
     assert(cmd != NULL);
     return strcmp(scommand_front(cmd), "exit") == 0 ||
            strcmp(scommand_front(cmd), "cd") == 0 ||
@@ -19,7 +20,6 @@ bool builtin_is_internal(scommand cmd)
 
 bool builtin_alone(pipeline p)
 {
-    // Juan
     assert(p != NULL);
     return pipeline_length(p) == 1 && builtin_is_internal(pipeline_front(p));
 }
@@ -39,15 +39,17 @@ void builtin_run(scommand cmd)
             printf("cd: Too many arguments");
         }
 
-        char *arg = scommand_get_argument(cmd, 1);
-        if (arg == NULL)
+        char *path = scommand_get_argument(cmd, 1);
+        
+        if (path == NULL)
         {
             chdir("~");
         }
         else
         {
-            chdir(arg);
+            chdir(path);
         }
+
     }
     if (strcmp(scommand_front(cmd), "help") == 0)
         {
