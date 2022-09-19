@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 #include "command.h"
 #include "execute.h"
@@ -10,19 +11,16 @@
 
 static void show_prompt(void)
 {
-    printf("mybash> ");
+    char current_directory[1000];
+    current_directory[999] = '\0';
+    getcwd(current_directory, 1000);
+    if (current_directory==NULL) {
+        printf("You are currently in an inexistent directory");
+        exit(EXIT_FAILURE);
+    }
+    printf("mybash: %s> ", current_directory);
     fflush(stdout);
 }
-/*
-int check_for_EOF()
-{
-    if (feof(stdin))
-        return 1;
-    int c = getc(stdin);
-    if (c == EOF)
-        return 1;
-    ungetc(c, stdin);
-} */
 
 int main(int argc, char *argv[])
 {
@@ -38,14 +36,15 @@ int main(int argc, char *argv[])
         {
             show_prompt();
             pipe = parse_pipeline(input);
-            if(pipe != NULL){execute_pipeline(pipe);}
+            if(pipe != NULL)
+            {
+            execute_pipeline(pipe);
+            }
         }
         else
         {
             printf("\n");
         }
-        /* Hay que salir luego de ejecutar? */
-        // spoiler no, hay que salir cuando hagamos el ctrl+d
     }
     parser_destroy(input);
     input = NULL;
