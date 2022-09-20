@@ -216,6 +216,12 @@ void pipeline_set_wait(pipeline self, const bool w);
 
 /* Proyectores */
 
+void pipeline_set_secuencial(pipeline self, const bool s);
+/*
+ * Define si el pipeline es secuencial o no.
+ *   self: pipeline que quiere ser establecido en su atributo de secuencialidad.
+ * Requires: self!=NULL
+ */
 bool pipeline_is_empty(const pipeline self);
 /*
  * Indica si la secuencia de comandos simples tiene longitud 0.
@@ -251,6 +257,14 @@ bool pipeline_get_wait(const pipeline self);
  * Consulta si el pipeline tiene que esperar o no.
  *   self: pipeline a decidir si hay que esperar.
  *   Returns: ¿Hay que esperar en el pipeline self?
+ * Requires: self!=NULL
+ */
+
+bool pipeline_get_secuencial(const pipeline self);
+/*
+ * Consulta si el pipeline es secuencial o no.
+ *   self: pipeline a decidir si hay que esperar.
+ *   Returns: ¿El pipeline es secuencial?
  * Requires: self!=NULL
  */
 

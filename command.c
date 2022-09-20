@@ -181,6 +181,7 @@ struct pipeline_s
 {
     GList *commands_queue;
     bool wait;
+    bool secuencial;
 };
 
 pipeline pipeline_new(void)
@@ -233,6 +234,12 @@ void pipeline_set_wait(pipeline self, const bool w)
     self->wait = w;
 }
 
+void pipeline_set_secuencial(pipeline self, const bool s)
+{
+    assert(self != NULL);
+    self->secuencial = s;
+}
+
 bool pipeline_is_empty(const pipeline self)
 {
     assert(self != NULL);
@@ -257,6 +264,12 @@ bool pipeline_get_wait(const pipeline self)
 {
     assert(self != NULL);
     return self->wait;
+}
+
+bool pipeline_get_secuencial(const pipeline self)
+{
+    assert(self != NULL);
+    return self->secuencial;
 }
 
 char *pipeline_to_string(const pipeline self)

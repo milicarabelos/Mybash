@@ -17,7 +17,7 @@ static scommand parse_scommand(Parser p)
 
     parser_skip_blanks(p);
     command_text = parser_next_argument(p, &argument_type);
-
+    /* Si la cadena es vacia devuelvo un scommand vacio */
     if (command_text == NULL)
     {
         simple_command = scommand_destroy(simple_command);
@@ -52,7 +52,7 @@ pipeline parse_pipeline(Parser p)
     scommand cmd = NULL;
     bool error = false, another_pipe = false;
     bool wait, garbage;
-
+    bool secuencial = false;
     cmd = parse_scommand(p);
     error = (cmd == NULL); /* Comando inválido al empezar */
 
@@ -61,26 +61,35 @@ pipeline parse_pipeline(Parser p)
         pipeline_push_back(result, cmd);
     }
 
-    parser_skip_blanks(p); // sobra pq parser_next_argument llega caracter especial?
+    parser_skip_blanks(p);
     parser_op_pipe(p, &another_pipe);
 
     if (another_pipe)
     {
         cmd = parse_scommand(p);
-        pipeline_push_back(result, cmd);
-    }
-
-    /* IDEA DE COMO GENERALIZARLO A N
-         while (!error && another_pipe)
+        error = (cmd == NULL);
+        if (!error)
         {
             pipeline_push_back(result, cmd);
-            cmd = parse_scommand(p);
-            parser_op_pipe(p, &another_pipe);
-            error = (cmd == NULL);
-        } */
+        }
+    }
 
     parser_op_background(p, &wait);
-    pipeline_set_wait(result, !(wait)); // si hay un & no espera
+    pipeline_set_wait(result, !(wait));   // si hay un & no espera
+    parser_op_background(p, &secuencial); // si hay otro & es secuencial
+    if (secuencial)
+    {
+        wait = false;
+        cmd = parse_scommand(p);
+        error = (cmd == NULL);
+        if (!error)
+        {
+            pipeline_push_back(result, cmd);
+        }
+        pipeline_set_wait(result, !(wait));
+    }
+    pipeline_set_secuencial(result, secuencial);
+
     /* Tolerancia a espacios posteriores */
     parser_skip_blanks(p);
     /* Consumir todo lo que hay inclusive el \n */
@@ -92,6 +101,6 @@ pipeline parse_pipeline(Parser p)
         pipeline_destroy(result);
         result = NULL;
     }
-    
+
     return result;
 }

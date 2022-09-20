@@ -14,7 +14,8 @@ static void show_prompt(void)
     char current_directory[1000];
     current_directory[999] = '\0';
     getcwd(current_directory, 1000);
-    if (current_directory==NULL) {
+    if (current_directory == NULL)
+    {
         printf("You are currently in an inexistent directory");
         exit(EXIT_FAILURE);
     }
@@ -36,16 +37,14 @@ int main(int argc, char *argv[])
         {
             show_prompt();
             pipe = parse_pipeline(input);
-            if(pipe != NULL)
+            if (pipe != NULL)
             {
-            execute_pipeline(pipe);
+                execute_pipeline(pipe);
             }
         }
-        else
-        {
-            printf("\n");
-        }
     }
+    printf("\n");
+
     parser_destroy(input);
     input = NULL;
     return EXIT_SUCCESS;

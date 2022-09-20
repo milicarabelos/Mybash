@@ -4,6 +4,9 @@
 #include "command.h"
 #include "parser.h"
 
+//bool parse_is_secuencial(Parser p);
+
+
 pipeline parse_pipeline(Parser parser);
 /*
  * Lee todo un pipeline de `parser' hasta llegar a un fin de línea (inclusive)
