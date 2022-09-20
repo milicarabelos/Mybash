@@ -1,4 +1,4 @@
-﻿INFORME : laboratorio 1 my bash
+﻿INFORME : laboratorio 1 Mybash
 
 Grupo 23
 
@@ -17,46 +17,44 @@ Integrantes :
 
 ÍNDICE
 
-1.  [Como usar mybash](#Como-usar-mybash)
-    
-2.  [Implementación](#Implementación)
+1.  [Como usar mybash](#como-usar-mybash)
+2.  [Implementación](#implementaci%C3%B3n) 
+
+2.1 [Bloques](#bloques)
+
+-   [Command](#command)
     
 
-    [Bloques](##Bloques)
-
--   [Command](###Command)
+-   [Funciones Extras](#funciones-extras)
+    
+-   [Librerías](#librer%C3%ADas)
     
 
--   [Funciones extras](####Funciones-extras)
+-   [Parsing](#parsing)
     
--   [Librerías](####Librerías)
+-   [Builtin](#builtin)
     
-
--   [Parsing](###Parsing)
-    
--   [Builtin](###Builtin)
-    
--   [Execute](###Execute)
+-   [Execute](#execute)
     
 
--   [Modularización](####Modularización)
+-    [Modularización](#modularizaci%C3%B3n)
     
 
--   [Mybash](###Mybash)
+-   [Mybash](#mybash)
     
 
-3.  [Resultado de los tests](#Resultado-de-los-tests)
+3.  [Resultado de los tests](#resultado-de-los-tests)
     
 
--   [Tests de funcionamiento](##Tests-de-funcionamiento)
+-   [Tests de funcionamiento](#tests-de-funcionamiento)
     
--   [Memtest](##Memtest)
-    
-
-4.  [Organización del trabajo grupal](#Organización-del-trabajo-grupal)
+-   [Memtest](#memtest)
     
 
--  [Calidad del código](##Calidad-del-código)
+4.  [Organización del trabajo grupal](#organizaci%C3%B3n-del-trabajo-grupal)
+    
+
+-  [Calidad del código](#calidad-del-c%C3%B3digo) 
     
 
   
@@ -142,7 +140,7 @@ No hay nada demasiado interesante que destacar de este módulo pero nuevamente u
 -   ### Builtin
     
 
-Este módulo se encarga de ejecutar los comandos internos que no requieren de las syscalls a fork ni execvp, nuevamente no hay ninguna decisión muy importante de diseño o implementación extra en este módulo. Aqui se implemento cd, que cambia de directorio mediante una llamada a la syscall chdir que cambia de directorio, help, que muestra un texto de ayuda en pantalla, y exit, que permite la salida de mybash de manera limpia.
+Este módulo se encarga de ejecutar los comandos internos que no requieren de las syscalls a fork ni execvp, nuevamente no hay ninguna decisión muy importante de diseño o implementación extra en este módulo. Aqui se implemento cd, que cambia de directorio mediante una llamada a la syscall chdir la cual cambia de directorio, help, que muestra un texto de ayuda en pantalla, y exit, que permite la salida de mybash de manera limpia.
 
   
 
@@ -212,3 +210,4 @@ Links a destacar
 [División de tareas](https://miro.com/app/board/uXjVPcn1k18=/?share_link_id=635177705461)
 
 [Updates por fecha](https://docs.google.com/document/d/1970EUh5jpExFCAM8peJnbo2FX8zSUvGWKQBoJ5QixJw/edit)
+
