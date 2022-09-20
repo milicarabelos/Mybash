@@ -41,7 +41,9 @@ Integrantes :
     
 
 -   [Mybash](#mybash)
-    
+
+2.2 [Funcionalidades extra](#funcionalidades-extra) 
+
 
 3.  [Resultado de los tests](#resultado-de-los-tests)
     
@@ -178,7 +180,8 @@ De esta manera la función principal solo se encarga de elegir qué función de 
 
 En este bloque se encuentra la función main que utiliza directamente el módulo execute, también chequeamos en este bloque si el parseo inicial del texto escrito por la terminal corresponde a un EOF (end of file), esta señal nos avisa que el usuario a utilizado la combinación de teclas control + D y por lo tanto nuestro programa debe terminar. Además, decidimos modificar el prompt para que muestre información relevante. En este caso, el directorio actual el cual lo obtenemos con la función getcwd y se lo asignamos a un arreglo de chars, primero por el tipo de parámetros que toma getcwd y segundo para que quede en stack y no se utilice memoria dinámica.
 
-  
+## Funcionalidades extra
+Sobre los puntos estrella, pudimos modificar el prompt para que muestre el directorio actual e implementar el comando secuencial && para que se ejecute el siguiente comando solo si el primero resulta exitoso (para lo cual modificamos la estructura del pipeline para que tenga otro campo de tipo booleano que indique si hay un símbolo extra &, agregamos funciones que modifiquen el campo y se hicieron modificaciones en el parsing y execute agregando la función execute_secuential_commands).
 
 # Resultado de los tests
 
